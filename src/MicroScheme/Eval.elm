@@ -1,34 +1,19 @@
-module Expr exposing (..)
+module MicroScheme.Eval exposing (display, eval)
 
 import Maybe.Extra
-
-
-type Expr
-    = Z Int
-    | F Float
-    | Str String
-    | Sym String
-    | L (List Expr)
-
-
-type SpecialForm
-    = Define
-    | Display
-    | If
+import MicroScheme.Expr exposing (Expr(..))
 
 
 {-|
 
     EXAMPLE
 
-    arithExpr =
-        L [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]
-
-    > eval arithExpr
+    > display <| eval (L [times, Z 2,  L [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]])
     PLUS: Just (Z 7)
     PLUS: Just (Z 3)
     TIMES: Just (Z 21)
-    Just (Z 21) :
+    TIMES: Just (Z 42)
+    "42" : String
 
 -}
 eval : Expr -> Maybe Expr
@@ -115,35 +100,3 @@ display maybeExpr =
 
                 u ->
                     Debug.toString u
-
-
-
--- EXAMPLES
-
-
-z =
-    Z 1
-
-
-pii =
-    F 3.1416
-
-
-plus =
-    Sym "+"
-
-
-times =
-    Sym "*"
-
-
-plusExpr =
-    L [ plus, Z 1, Z 2, Z 3 ]
-
-
-timesExpr =
-    L [ times, Z 1, Z 2, Z 3, Z 4 ]
-
-
-arithExpr =
-    L [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]
