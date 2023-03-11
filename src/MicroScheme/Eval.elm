@@ -39,10 +39,10 @@ evalMaybe maybeExpr =
                     Just (Sym s)
 
                 L ((Sym "+") :: rest) ->
-                    evalPlus (List.map (evalMaybe << Just) rest |> Maybe.Extra.values) |> Debug.log "PLUS"
+                    evalPlus (List.map (evalMaybe << Just) rest |> Maybe.Extra.values)
 
                 L ((Sym "*") :: rest) ->
-                    evalTimes (List.map (evalMaybe << Just) rest |> Maybe.Extra.values) |> Debug.log "TIMES"
+                    evalTimes (List.map (evalMaybe << Just) rest |> Maybe.Extra.values)
 
                 _ ->
                     Nothing
@@ -99,4 +99,8 @@ display maybeExpr =
                     s
 
                 u ->
-                    Debug.toString u
+                    "Unprocessable expression"
+
+
+
+-- Debug.toString u

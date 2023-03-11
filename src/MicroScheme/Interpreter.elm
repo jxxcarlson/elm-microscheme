@@ -27,12 +27,16 @@ step : State -> State
 step state =
     case Parser.parse state.symbolTable state.input of
         Err err ->
-            { state | output = "Error (1): " ++ Debug.toString err }
+            { state
+                | output = "Error (1): " --  ++ Debug.toString err
+            }
 
         Ok expr ->
             case Eval.eval expr of
                 Nothing ->
-                    { state | output = "Error (2): " ++ Debug.toString expr }
+                    { state
+                        | output = "Error (2): " -- ++ Debug.toString expr
+                    }
 
                 Just value ->
                     { state | output = Eval.display (Just value) }

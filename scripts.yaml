@@ -1,3 +1,16 @@
 scripts:
 
+  # Velociraptor scripts
+
   cloc: cloc --by-file src
+
+  compile:
+    - elm make src/Main.elm --output=src/main.js
+    - node src/repl.js
+
+  compile-optimize:
+    - elm make src/Main.elm --optimize --output=src/main.js
+    - node src/repl.js
+
+  interpreter:
+    - node src/repl.js
