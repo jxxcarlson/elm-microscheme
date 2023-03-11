@@ -1,4 +1,4 @@
-module MicroScheme.Interpreter exposing (..)
+module MicroScheme.Interpreter exposing (State, init, input, step)
 
 import Dict
 import MicroScheme.Environment as Environment exposing (Frame, SymbolTable)
@@ -66,22 +66,3 @@ step state =
 
                 Just value ->
                     { state | symbolTable = data.symbolTable, output = Eval.display (Just value) }
-
-
-
--- HELPERS
-
-
-type Step state a
-    = Loop state
-    | Done a
-
-
-loop : state -> (state -> Step state a) -> a
-loop s f =
-    case f s of
-        Loop s_ ->
-            loop s_ f
-
-        Done b ->
-            b

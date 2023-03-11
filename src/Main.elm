@@ -2,6 +2,7 @@ port module Main exposing (main)
 
 import BlackBox
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
+import MicroScheme.Interpreter as Interpreter
 import Platform exposing (Program)
 
 
@@ -21,7 +22,7 @@ main =
 
 
 type alias Model =
-    {}
+    { state : Interpreter.State }
 
 
 type Msg
@@ -34,7 +35,7 @@ type alias Flags =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    {} |> withNoCmd
+    { state = Interpreter.init "" } |> withNoCmd
 
 
 subscriptions : Model -> Sub Msg
@@ -46,5 +47,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Input input ->
-            -- model |> withCmd (put <| BlackBox.transform input)
-            model |> withCmd (put (BlackBox.transform input))
+            let
+                state1 =
+                    Interpreter.input input model.state
+
+                state2 =
+                    Interpreter.step state1
+
+                output =
+                    state2.output
+
+                -- model |> withCmd (put <| BlackBox.transform input)
+            in
+            { model | state = state2 } |> withCmd (put output)
