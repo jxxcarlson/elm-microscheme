@@ -1,19 +1,10 @@
-module MicroScheme.Parser exposing (parse)
+module MicroScheme.Parser exposing (exprParser, parse)
 
 import Dict exposing (Dict)
 import MicroScheme.Environment as Environment
 import MicroScheme.Expr exposing (Expr(..))
 import Parser as P exposing ((|.), (|=))
 import Set
-
-
-
---type Expr
---    = Z Int
---    | F Float
---    | Str String
---    | Sym String
---    | L (List Expr)
 
 
 {-|
@@ -65,7 +56,7 @@ stringParser : P.Parser Expr
 stringParser =
     P.map Str
         (P.variable
-            { start = Char.isAlpha
+            { start = \c -> Char.isAlpha c || c == '+' || c == '*'
             , inner = \c -> Char.isAlphaNum c || c == '_'
             , reserved = Set.fromList [ "eval", "define", "display" ]
             }

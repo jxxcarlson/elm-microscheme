@@ -1,5 +1,7 @@
 module MicroScheme.Environment exposing
-    ( SymbolTable
+    ( Frame
+    , SymbolTable
+    , addBinding
     , addSymbol
     , resolveSymbols
     , symbolTable
@@ -9,6 +11,16 @@ import Dict exposing (Dict)
 import MicroScheme.Expr exposing (Expr(..))
 
 
+{-| -}
+type alias Frame =
+    Dict String Expr
+
+
+addBinding : String -> Expr -> Frame -> Frame
+addBinding str expr frame =
+    Dict.insert str expr frame
+
+
 type alias SymbolTable =
     Dict String Expr
 
@@ -16,8 +28,8 @@ type alias SymbolTable =
 symbolTable : Dict String Expr
 symbolTable =
     Dict.fromList
-        [ ( "plus", Sym "plus" )
-        , ( "times", Sym "times" )
+        [ ( "+", Sym "+" )
+        , ( "*", Sym "*" )
         ]
 
 
