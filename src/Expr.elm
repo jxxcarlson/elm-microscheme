@@ -19,52 +19,81 @@ type SpecialForm
 
 eval : Expr -> Maybe Expr
 eval expr =
-    case expr of
-        Z n ->
-            Just (Z n)
-
-        F r ->
-            Just (F r)
-
-        Sym s ->
-            Just (Sym s)
-
-        L ((Sym "+") :: rest) ->
-            evalPlus rest
-
-        L ((Sym "*") :: rest) ->
-            evalTimes rest
-
-        _ ->
-            Nothing
+    evalMaybe2 (Just expr)
 
 
-evalPlus rest =
-    case List.map eval rest |> Maybe.Extra.combine of
+evalMaybe : Maybe Expr -> Maybe Expr
+evalMaybe maybeExpr =
+    case maybeExpr of
         Nothing ->
             Nothing
 
-        Just values ->
-            case List.map unwrapInteger values |> Maybe.Extra.combine of
-                Nothing ->
+        Just expr ->
+            case expr of
+                Z n ->
+                    Just (Z n)
+
+                F r ->
+                    Just (F r)
+
+                Sym s ->
+                    Just (Sym s)
+
+                L ((Sym "+") :: rest) ->
+                    evalPlus rest |> Debug.log "PLUS"
+
+                L ((Sym "*") :: rest) ->
+                    evalTimes rest |> Debug.log "Times"
+
+                _ ->
                     Nothing
 
-                Just ints ->
-                    Just <| Z (List.sum ints)
 
-
-evalTimes rest =
-    case List.map eval rest |> Maybe.Extra.combine of
+evalMaybe2 : Maybe Expr -> Maybe Expr
+evalMaybe2 maybeExpr =
+    case maybeExpr of
         Nothing ->
             Nothing
 
-        Just values ->
-            case List.map unwrapInteger values |> Maybe.Extra.combine of
-                Nothing ->
+        Just expr ->
+            case expr of
+                Z n ->
+                    Just (Z n)
+
+                F r ->
+                    Just (F r)
+
+                Sym s ->
+                    Just (Sym s)
+
+                L ((Sym "+") :: rest) ->
+                    evalPlus (List.map (evalMaybe2 << Just) rest |> Maybe.Extra.values) |> Debug.log "PLUS"
+
+                L ((Sym "*") :: rest) ->
+                    evalTimes (List.map (evalMaybe2 << Just) rest |> Maybe.Extra.values) |> Debug.log "TIMES"
+
+                _ ->
                     Nothing
 
-                Just ints ->
-                    Just <| Z (List.product ints)
+
+evalPlus : List Expr -> Maybe Expr
+evalPlus rest_ =
+    case List.map unwrapInteger rest_ |> Maybe.Extra.combine of
+        Nothing ->
+            Nothing
+
+        Just ints ->
+            Just <| Z (List.sum ints)
+
+
+evalTimes : List Expr -> Maybe Expr
+evalTimes rest_ =
+    case List.map unwrapInteger rest_ |> Maybe.Extra.combine of
+        Nothing ->
+            Nothing
+
+        Just ints ->
+            Just <| Z (List.product ints)
 
 
 unwrapInteger : Expr -> Maybe Int
@@ -77,23 +106,28 @@ unwrapInteger expr =
             Nothing
 
 
-display : Expr -> String
-display expr =
-    case expr of
-        Z n ->
-            String.fromInt n
+display : Maybe Expr -> String
+display maybeExpr =
+    case maybeExpr of
+        Nothing ->
+            "error"
 
-        F x ->
-            String.fromFloat x
+        Just expr ->
+            case expr of
+                Z n ->
+                    String.fromInt n
 
-        Str s ->
-            s
+                F x ->
+                    String.fromFloat x
 
-        Sym s ->
-            s
+                Str s ->
+                    s
 
-        u ->
-            Debug.toString u
+                Sym s ->
+                    s
+
+                u ->
+                    Debug.toString u
 
 
 
@@ -125,4 +159,4 @@ timesExpr =
 
 
 arithExpr =
-    [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]
+    L [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]
