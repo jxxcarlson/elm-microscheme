@@ -2,7 +2,7 @@ module MicroScheme.Parser exposing (exprParser, parse)
 
 import Dict exposing (Dict)
 import MicroScheme.Environment as Environment
-import MicroScheme.Expr exposing (Expr(..))
+import MicroScheme.Expr as Expr exposing (Expr(..))
 import Parser as P exposing ((|.), (|=))
 import Set
 
@@ -27,11 +27,21 @@ parse table str =
 exprParser : P.Parser Expr
 exprParser =
     P.oneOf
-        [ P.lazy (\_ -> listParser)
+        [ specialFormParser
+        , P.lazy (\_ -> listParser)
         , P.backtrackable intParser
         , floatParser
         , stringParser
         ]
+
+
+specialFormParser =
+    P.oneOf [ P.map SF defineParser ]
+
+
+defineParser : P.Parser Expr.SpecialForm
+defineParser =
+    P.map (\_ -> Expr.Define) (P.symbol "define")
 
 
 listParser : P.Parser Expr

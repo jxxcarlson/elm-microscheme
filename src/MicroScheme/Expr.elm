@@ -1,4 +1,4 @@
-module MicroScheme.Expr exposing (Expr(..))
+module MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
 
 
 type Expr
@@ -7,6 +7,7 @@ type Expr
     | Str String
     | Sym String
     | L (List Expr)
+    | SF SpecialForm
 
 
 type SpecialForm

@@ -1,7 +1,8 @@
 module MicroScheme.Eval exposing (display, eval)
 
 import Maybe.Extra
-import MicroScheme.Expr exposing (Expr(..))
+import MicroScheme.Environment as Environment exposing (SymbolTable)
+import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
 
 
 {-|
@@ -16,9 +17,14 @@ import MicroScheme.Expr exposing (Expr(..))
     "42" : String
 
 -}
-eval : Expr -> Maybe Expr
-eval expr =
-    evalMaybe (Just expr)
+eval : { symbolTable : SymbolTable, expr : Expr } -> { symbolTable : SymbolTable, maybeExpr : Maybe Expr }
+eval { symbolTable, expr } =
+    case expr of
+        L [ SF Define, Str name, expr_ ] ->
+            { symbolTable = Environment.addSymbol name expr_ symbolTable, maybeExpr = Just expr }
+
+        _ ->
+            { symbolTable = symbolTable, maybeExpr = evalMaybe (Just expr) }
 
 
 evalMaybe : Maybe Expr -> Maybe Expr
@@ -98,8 +104,11 @@ display maybeExpr =
                 Sym s ->
                     s
 
+                L [ SF Define, Str name, expr2 ] ->
+                    "define " ++ name ++ " : " ++ display (Just expr2)
+
                 u ->
-                    "Unprocessable expression"
+                    "Unprocessable expression: " ++ Debug.toString u
 
 
 

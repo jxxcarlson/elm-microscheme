@@ -15,14 +15,38 @@ type alias State =
 
 
 init : String -> State
-init input =
-    { input = input
+init str =
+    { input = str
     , output = ""
     , symbolTable = Environment.symbolTable
     , globalFrame = Dict.empty
     }
 
 
+input : String -> State -> State
+input str state =
+    { state | input = str }
+
+
+{-|
+
+    > s1 = init "(define x 5)"
+    { globalFrame = Dict.fromList [], input = "(define x 5)"
+    , output = "", symbolTable = Dict.fromList [("*",Sym "*"),("+",Sym "+")] }
+
+    > s2 = step s1
+    { globalFrame = Dict.fromList [], input = "(define x 5)"
+    , output = "define x : 5", symbolTable = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("x",Z 5)] }
+
+    > s3 = input "(+ x 1)" s2
+    { globalFrame = Dict.fromList [], input = "(+ x 1)"
+    , output = "define x : 5", symbolTable = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("x",Z 5)] }
+
+    > s4 = step s3
+    { globalFrame = Dict.fromList [], input = "(+ x 1)"
+    , output = "6", symbolTable = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("x",Z 5)] }
+
+-}
 step : State -> State
 step state =
     case Parser.parse state.symbolTable state.input of
@@ -32,14 +56,16 @@ step state =
             }
 
         Ok expr ->
-            case Eval.eval expr of
+            let
+                data =
+                    Eval.eval { symbolTable = state.symbolTable, expr = expr }
+            in
+            case data.maybeExpr of
                 Nothing ->
-                    { state
-                        | output = "Error (2): " -- ++ Debug.toString expr
-                    }
+                    { state | symbolTable = data.symbolTable, output = "Error (step)" }
 
                 Just value ->
-                    { state | output = Eval.display (Just value) }
+                    { state | symbolTable = data.symbolTable, output = Eval.display (Just value) }
 
 
 
