@@ -19,7 +19,7 @@ type SpecialForm
 
 eval : Expr -> Maybe Expr
 eval expr =
-    evalMaybe2 (Just expr)
+    evalMaybe (Just expr)
 
 
 evalMaybe : Maybe Expr -> Maybe Expr
@@ -40,37 +40,10 @@ evalMaybe maybeExpr =
                     Just (Sym s)
 
                 L ((Sym "+") :: rest) ->
-                    evalPlus rest |> Debug.log "PLUS"
+                    evalPlus (List.map (evalMaybe << Just) rest |> Maybe.Extra.values) |> Debug.log "PLUS"
 
                 L ((Sym "*") :: rest) ->
-                    evalTimes rest |> Debug.log "Times"
-
-                _ ->
-                    Nothing
-
-
-evalMaybe2 : Maybe Expr -> Maybe Expr
-evalMaybe2 maybeExpr =
-    case maybeExpr of
-        Nothing ->
-            Nothing
-
-        Just expr ->
-            case expr of
-                Z n ->
-                    Just (Z n)
-
-                F r ->
-                    Just (F r)
-
-                Sym s ->
-                    Just (Sym s)
-
-                L ((Sym "+") :: rest) ->
-                    evalPlus (List.map (evalMaybe2 << Just) rest |> Maybe.Extra.values) |> Debug.log "PLUS"
-
-                L ((Sym "*") :: rest) ->
-                    evalTimes (List.map (evalMaybe2 << Just) rest |> Maybe.Extra.values) |> Debug.log "TIMES"
+                    evalTimes (List.map (evalMaybe << Just) rest |> Maybe.Extra.values) |> Debug.log "TIMES"
 
                 _ ->
                     Nothing
