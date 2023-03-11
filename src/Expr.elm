@@ -17,6 +17,20 @@ type SpecialForm
     | If
 
 
+{-|
+
+    EXAMPLE
+
+    arithExpr =
+        L [ times, L [ plus, Z 1, Z 2 ], L [ plus, Z 3, Z 4 ] ]
+
+    > eval arithExpr
+    PLUS: Just (Z 7)
+    PLUS: Just (Z 3)
+    TIMES: Just (Z 21)
+    Just (Z 21) :
+
+-}
 eval : Expr -> Maybe Expr
 eval expr =
     evalMaybe (Just expr)
