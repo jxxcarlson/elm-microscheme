@@ -2,9 +2,11 @@
 
 Elm-Microscheme is an implementation of a tiny
 subset of Scheme written in [Elm](https://elm-lang.org).
-Since the aim of the project is educational — to underestand
+Since the aim of the project is educational — to understand
 how to build a Scheme interpreter — I intend to 
-keep the codebase very small. A good exercise is to 
+keep the codebase very small even as I work to 
+add new features, e.g., a proper treatment
+of environments. A good exercise is to 
 fork the project and 
 add whatever features to it that you find interesting
 or useful.
