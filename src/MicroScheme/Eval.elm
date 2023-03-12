@@ -3,7 +3,6 @@ module MicroScheme.Eval exposing (display, eval)
 import Maybe.Extra
 import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
 import MicroScheme.Frame as Frame exposing (Frame)
-import MicroScheme.Init as Init
 import Result.Extra
 
 

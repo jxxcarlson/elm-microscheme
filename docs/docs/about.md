@@ -15,7 +15,7 @@ or useful.
 To compile and run the interpreter, say `sh run.sh` 
 on the command line.  This command will compile 
 the code and start up the command-line interface
-to the interpreter.  Below is a screenshot of the
+to the interpreter.  Below is a screenshot of 
 a short session with the interpreter. 
 
 
@@ -30,19 +30,18 @@ a short session with the interpreter.
 ----------------------------------------------------------------------------------
 File                                           blank        comment           code
 ----------------------------------------------------------------------------------
-src/MicroScheme/Eval.elm                          40             10             93
+src/MicroScheme/Eval.elm                          40             10             92
 src/MicroScheme/Frame.elm                         25              0             64
 src/MicroScheme/Parser.elm                        28             11             56
 src/MicroScheme/Interpreter.elm                   18             14             43
 src/Main.elm                                      22              0             41
-src/MicroScheme/Environment.elm                    9              0             20
-src/MicroScheme/Examples.elm                      18              1             16
+src/MicroScheme/Environment.elm                    9              0             19
 src/MicroScheme/Expr.elm                           4              0             13
 src/MicroScheme/Init.elm                           3              0             10
 ----------------------------------------------------------------------------------
-SUM:                                             167             36            356
+SUM:                                             149             35            338
 ----------------------------------------------------------------------------------
 ```
 
-## Structure of the Project
+
 

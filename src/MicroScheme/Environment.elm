@@ -6,7 +6,6 @@ module MicroScheme.Environment exposing
     )
 
 import MicroScheme.Frame as Frame exposing (Frame)
-import MicroScheme.Init as Init
 import Tree exposing (Tree)
 import Tree.Zipper exposing (Zipper)
 
