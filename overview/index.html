@@ -112,7 +112,10 @@ parse table str =
 </code></pre>
 <p>The first argument of <code>parse</code> is the root frame, which
 is used to map certain values to symbols, e.g.,
-<code>Str "+"</code> to <code>Sym "+"</code>.</p>
+<code>Str "+"</code> to <code>Sym "+"</code>.  Thus we have</p>
+<pre><code class="language-elm">&gt; parse symbolTable &quot;(+ 1 2)&quot;
+Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
+</code></pre>
 <h2 id="eval">Eval</h2>
 <pre><code class="language-elm">eval : Expr -&gt; Result EvalError Expr
 </code></pre>
