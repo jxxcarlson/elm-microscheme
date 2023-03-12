@@ -2,7 +2,8 @@ module MicroScheme.Eval exposing (display, eval)
 
 import Maybe.Extra
 import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
-import MicroScheme.Frame as Frame exposing (SymbolTable)
+import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Init as Init
 import Result.Extra
 
 
@@ -18,7 +19,7 @@ import Result.Extra
     "42" : String
 
 -}
-eval : { symbolTable : SymbolTable, expr : Expr } -> { symbolTable : SymbolTable, resultExpr : Result EvalError Expr }
+eval : { symbolTable : Frame, expr : Expr } -> { symbolTable : Frame, resultExpr : Result EvalError Expr }
 eval { symbolTable, expr } =
     case expr of
         L [ SF Define, Str name, expr_ ] ->

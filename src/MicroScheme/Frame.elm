@@ -1,13 +1,11 @@
 module MicroScheme.Frame exposing
     ( Frame
     , FrameError(..)
-    , SymbolTable
     , addBinding
     , addBindings
     , addSymbol
     , apply
     , empty
-    , symbolTable
     , varNames
     )
 
@@ -20,6 +18,10 @@ type alias Frame =
     Dict String Expr
 
 
+type FrameError
+    = UnequalLists Int Int
+
+
 empty =
     Dict.empty
 
@@ -27,10 +29,6 @@ empty =
 addBinding : ( String, Expr ) -> Frame -> Frame
 addBinding ( str, expr ) frame =
     Dict.insert str expr frame
-
-
-type FrameError
-    = UnequalLists Int Int
 
 
 addBindings : List String -> List Expr -> Frame -> Result FrameError Frame
@@ -68,19 +66,7 @@ varName expr =
             Nothing
 
 
-type alias SymbolTable =
-    Dict String Expr
-
-
-symbolTable : Dict String Expr
-symbolTable =
-    Dict.fromList
-        [ ( "+", Sym "+" )
-        , ( "*", Sym "*" )
-        ]
-
-
-addSymbol : String -> Expr -> SymbolTable -> SymbolTable
+addSymbol : String -> Expr -> Frame -> Frame
 addSymbol str expr table =
     Dict.insert str expr table
 

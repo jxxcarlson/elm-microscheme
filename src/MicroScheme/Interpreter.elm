@@ -2,14 +2,15 @@ module MicroScheme.Interpreter exposing (State, init, input, step)
 
 import Dict
 import MicroScheme.Eval as Eval
-import MicroScheme.Frame as Frame exposing (Frame, SymbolTable)
+import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Init as Init
 import MicroScheme.Parser as Parser
 
 
 type alias State =
     { input : String
     , output : String
-    , symbolTable : SymbolTable
+    , symbolTable : Frame
     , globalFrame : Frame
     }
 
@@ -18,7 +19,7 @@ init : String -> State
 init str =
     { input = str
     , output = ""
-    , symbolTable = Frame.symbolTable
+    , symbolTable = Init.symbolTable
     , globalFrame = Dict.empty
     }
 
