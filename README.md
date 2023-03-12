@@ -1,7 +1,10 @@
 # Elm-MicroScheme
 
-A start on an implementation of a tiny Scheme in Elm (V0.1).Work in Progress.
+A start on an implementation of a tiny Scheme in Elm (V0.1). Work in Progress.
 
+There is not much here yet, though I think the foundation is good:
+
+µ
 ## Directions
 
 To compile and run the interpreter, say `sh run.sh` on the command line.
