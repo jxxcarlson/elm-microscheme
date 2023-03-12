@@ -1,6 +1,6 @@
 # Elm-MicroScheme
 
-An implementation of a tiny Scheme in Elm (V0.1).Work in Progress.
+A start on an implementation of a tiny Scheme in Elm (V0.1).Work in Progress.
 
 ## Directions
 
