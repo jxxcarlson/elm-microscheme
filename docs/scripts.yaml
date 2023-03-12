@@ -1,0 +1,7 @@
+scripts:
+
+  publish:
+    - git add docs
+    - git ci -m "update docs" docs/* scripts.yaml 
+    - git push
+    - mkdocs gh-deploy
