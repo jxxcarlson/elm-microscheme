@@ -1,8 +1,8 @@
 module MicroScheme.Parser exposing (exprParser, parse)
 
 import Dict exposing (Dict)
-import MicroScheme.Environment as Environment
 import MicroScheme.Expr as Expr exposing (Expr(..))
+import MicroScheme.Frame as Frame
 import Parser as P exposing ((|.), (|=))
 import Set
 
@@ -21,7 +21,7 @@ import Set
 -}
 parse : Dict String Expr -> String -> Result (List P.DeadEnd) Expr
 parse table str =
-    P.run exprParser str |> Result.map (Environment.applyFrame table)
+    P.run exprParser str |> Result.map (Frame.apply table)
 
 
 exprParser : P.Parser Expr

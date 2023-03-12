@@ -1,0 +1,8 @@
+site_name: Elm-MicroScheme
+
+theme: readthedocs
+
+nav:
+  - Home: 'about.md'
+  - Overview: 'overview.md'
+  - Mkdocs:  'index.md'

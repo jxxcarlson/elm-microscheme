@@ -1,8 +1,8 @@
 module MicroScheme.Eval exposing (display, eval)
 
 import Maybe.Extra
-import MicroScheme.Environment as Environment exposing (SymbolTable)
 import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
+import MicroScheme.Frame as Frame exposing (SymbolTable)
 import Result.Extra
 
 
@@ -22,10 +22,10 @@ eval : { symbolTable : SymbolTable, expr : Expr } -> { symbolTable : SymbolTable
 eval { symbolTable, expr } =
     case expr of
         L [ SF Define, Str name, expr_ ] ->
-            { symbolTable = Environment.addSymbol name expr_ symbolTable, resultExpr = Ok expr }
+            { symbolTable = Frame.addSymbol name expr_ symbolTable, resultExpr = Ok expr }
 
         L [ SF Define, Str name, L args, L body ] ->
-            { symbolTable = Environment.addSymbol name (L [ SF Lambda, L args, L body ]) symbolTable
+            { symbolTable = Frame.addSymbol name (L [ SF Lambda, L args, L body ]) symbolTable
             , resultExpr = Ok expr
             }
 
@@ -35,7 +35,7 @@ eval { symbolTable, expr } =
 
 type EvalError
     = EvalError Int String
-    | FR Environment.FrameError
+    | FR Frame.FrameError
 
 
 evalResult : Result EvalError Expr -> Result EvalError Expr
@@ -81,16 +81,16 @@ evalResult resultExpr =
 applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
 applyLambda params body args =
     let
-        frameResult : Result Environment.FrameError Environment.Frame
+        frameResult : Result Frame.FrameError Frame.Frame
         frameResult =
-            Environment.addBindings (Environment.varNames params) args Environment.emptyFrame
+            Frame.addBindings (Frame.varNames params) args Frame.empty
     in
     case frameResult of
         Err frameError ->
             Err frameError |> Result.mapError (\err -> FR err)
 
         Ok frame ->
-            Ok (List.map (Environment.applyFrame frame) body |> L)
+            Ok (List.map (Frame.apply frame) body |> L)
 
 
 
