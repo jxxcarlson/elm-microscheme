@@ -63,7 +63,7 @@ step state =
                 L [ SF Define, Str name, expr_ ] ->
                     { state | rootFrame = Frame.addSymbol name expr_ state.rootFrame, output = name }
 
-                L [ SF Define, Str name, L args, L body ] ->
+                L [ SF Define, L ((Str name) :: args), L body ] ->
                     { state | rootFrame = Frame.addSymbol name (L [ SF Lambda, L args, L body ]) state.rootFrame, output = name }
 
                 _ ->

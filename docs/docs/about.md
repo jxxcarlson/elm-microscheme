@@ -24,7 +24,8 @@ a short session with the interpreter.
 
 
 
-![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/44526732-a41a-4f69-54a5-82785d9cbd00/public)
+![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7bb38caa-c314-48f0-6626-a90140b12c00/public
+)
 
 
 ## Layout of the code
@@ -46,6 +47,9 @@ src/MicroScheme/Init.elm                           3              0             
 SUM:                                             149             35            338
 ----------------------------------------------------------------------------------
 ```
+
+
+
 
 
 
