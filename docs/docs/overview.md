@@ -32,7 +32,12 @@ parse table str =
 
 The first argument of `parse` is the root frame, which
 is used to map certain values to symbols, e.g.,
-`Str "+"` to `Sym "+"`.
+`Str "+"` to `Sym "+"`.  Thus we have
+
+```elm
+> parse symbolTable "(+ 1 2)"
+Ok (L [Sym "+",Z 1,Z 2])
+```
 
 ## Eval
 
