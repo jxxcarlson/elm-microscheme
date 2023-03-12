@@ -51,6 +51,12 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#parser">Parser</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#eval">Eval</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#interpreter">Interpreter</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#frames-and-environments">Frames and Environments</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -100,9 +106,42 @@ type SpecialForm
     | If
 </code></pre>
 <h2 id="parser">Parser</h2>
-<pre><code class="language-text">parse : Dict String Expr -&gt; String -&gt; Result (List P.DeadEnd) Expr
+<pre><code class="language-text">parse : Frame -&gt; String -&gt; Result (List P.DeadEnd) Expr
 parse table str =
     P.run exprParser str |&gt; Result.map (Environment.applyFrame table)
+</code></pre>
+<p>The first argument of <code>parse</code> is the root frame, which
+is used to map certain values to symbols, e.g.,
+<code>Str "+"</code> to <code>Sym "+"</code>.</p>
+<h2 id="eval">Eval</h2>
+<pre><code class="language-elm">eval : Expr -&gt; Result EvalError Expr
+</code></pre>
+<h2 id="interpreter">Interpreter</h2>
+<p>The interpreter is governed by the three functoions</p>
+<pre><code class="language-elm">init : State
+input : String -&gt; State -&gt; State
+step : State -&gt; State
+</code></pre>
+<p>where</p>
+<pre><code class="language-elm">type alias State =
+    { input : String
+    , output : String
+    , environment : Environment
+    , rootFrame : Frame
+    }
+</code></pre>
+<p>The root frame maps names to symbols for top level
+names such as <code>"+"</code> and <code>"*"</code> as in <code>"( 1 2 3)"</code>.
+At the moment we do not use the environment field.</p>
+<h2 id="frames-and-environments">Frames and Environments</h2>
+<p>A <em>frame</em> binds expressions to names:</p>
+<pre><code class="language-elm">type alias Frame =
+    Dict String Expr
+</code></pre>
+<p>An <em>environment</em> is a tree of frames with a distinguished
+(movable) node, i.e., a zipper:</p>
+<pre><code class="language-elm">type alias Environment =
+    Zipper Frame
 </code></pre>
               
             </div>
