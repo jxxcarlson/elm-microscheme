@@ -19,19 +19,9 @@ import Result.Extra
     "42" : String
 
 -}
-eval : { symbolTable : Frame, expr : Expr } -> { symbolTable : Frame, resultExpr : Result EvalError Expr }
-eval { symbolTable, expr } =
-    case expr of
-        L [ SF Define, Str name, expr_ ] ->
-            { symbolTable = Frame.addSymbol name expr_ symbolTable, resultExpr = Ok expr }
-
-        L [ SF Define, Str name, L args, L body ] ->
-            { symbolTable = Frame.addSymbol name (L [ SF Lambda, L args, L body ]) symbolTable
-            , resultExpr = Ok expr
-            }
-
-        _ ->
-            { symbolTable = symbolTable, resultExpr = evalResult (Ok expr) }
+eval : Expr -> Result EvalError Expr
+eval expr =
+    evalResult (Ok expr)
 
 
 type EvalError

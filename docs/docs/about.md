@@ -20,7 +20,7 @@ a short session with the interpreter.
 
 
 
-![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/f4b24389-ee90-4bbb-285e-262d0912d500/public)
+![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/44526732-a41a-4f69-54a5-82785d9cbd00/public)
 
 
 ## Layout of the code
@@ -30,15 +30,17 @@ a short session with the interpreter.
 ----------------------------------------------------------------------------------
 File                                           blank        comment           code
 ----------------------------------------------------------------------------------
-src/MicroScheme/Eval.elm                          42             10            100
-src/MicroScheme/Environment.elm                   29              1             74
+src/MicroScheme/Eval.elm                          40             10             93
+src/MicroScheme/Frame.elm                         25              0             64
 src/MicroScheme/Parser.elm                        28             11             56
-src/Main.elm                                      22              1             38
-src/MicroScheme/Interpreter.elm                   16             14             38
+src/MicroScheme/Interpreter.elm                   18             14             43
+src/Main.elm                                      22              0             41
+src/MicroScheme/Environment.elm                    9              0             20
 src/MicroScheme/Examples.elm                      18              1             16
 src/MicroScheme/Expr.elm                           4              0             13
+src/MicroScheme/Init.elm                           3              0             10
 ----------------------------------------------------------------------------------
-SUM:                                             159             38            335
+SUM:                                             167             36            356
 ----------------------------------------------------------------------------------
 ```
 

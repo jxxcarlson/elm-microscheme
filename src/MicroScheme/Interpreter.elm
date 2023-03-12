@@ -1,7 +1,9 @@
 module MicroScheme.Interpreter exposing (State, init, input, step)
 
 import Dict
+import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
+import MicroScheme.Expr as Expr exposing (Expr(..), SpecialForm(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 import MicroScheme.Init as Init
 import MicroScheme.Parser as Parser
@@ -10,8 +12,8 @@ import MicroScheme.Parser as Parser
 type alias State =
     { input : String
     , output : String
-    , symbolTable : Frame
-    , globalFrame : Frame
+    , environment : Environment
+    , rootFrame : Frame
     }
 
 
@@ -19,8 +21,8 @@ init : String -> State
 init str =
     { input = str
     , output = ""
-    , symbolTable = Init.symbolTable
-    , globalFrame = Dict.empty
+    , environment = Environment.initial
+    , rootFrame = Init.symbolTable
     }
 
 
@@ -50,20 +52,24 @@ input str state =
 -}
 step : State -> State
 step state =
-    case Parser.parse state.symbolTable state.input of
+    case Parser.parse state.rootFrame state.input of
         Err err ->
             { state
                 | output = "Step error (1): " ++ Debug.toString err
             }
 
         Ok expr ->
-            let
-                data =
-                    Eval.eval { symbolTable = state.symbolTable, expr = expr }
-            in
-            case data.resultExpr of
-                Err error ->
-                    { state | symbolTable = data.symbolTable, output = Debug.toString error }
+            case expr of
+                L [ SF Define, Str name, expr_ ] ->
+                    { state | rootFrame = Frame.addSymbol name expr_ state.rootFrame, output = name }
 
-                Ok value ->
-                    { state | symbolTable = data.symbolTable, output = Eval.display value }
+                L [ SF Define, Str name, L args, L body ] ->
+                    { state | rootFrame = Frame.addSymbol name (L [ SF Lambda, L args, L body ]) state.rootFrame, output = name }
+
+                _ ->
+                    case Eval.eval expr of
+                        Err error ->
+                            { state | output = Debug.toString error }
+
+                        Ok value ->
+                            { state | output = Eval.display value }

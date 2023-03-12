@@ -46,16 +46,18 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Input input ->
-            let
-                state1 =
-                    Interpreter.input input model.state
+            if input == "\n" then
+                model |> withCmd (put "")
 
-                state2 =
-                    Interpreter.step state1
+            else
+                let
+                    state1 =
+                        Interpreter.input input model.state
 
-                output =
-                    state2.output
+                    state2 =
+                        Interpreter.step state1
 
-                -- model |> withCmd (put <| BlackBox.transform input)
-            in
-            { model | state = state2 } |> withCmd (put output)
+                    output =
+                        state2.output
+                in
+                { model | state = state2 } |> withCmd (put output)
