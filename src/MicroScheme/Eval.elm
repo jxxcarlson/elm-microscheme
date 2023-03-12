@@ -25,7 +25,7 @@ eval { symbolTable, expr } =
             { symbolTable = Environment.addSymbol name expr_ symbolTable, resultExpr = Ok expr }
 
         L [ SF Define, Str name, L args, L body ] ->
-            { symbolTable = Environment.addSymbol name (L [ SF Lambda, L args, L body ]) symbolTable |> Debug.log "SYMTABLE"
+            { symbolTable = Environment.addSymbol name (L [ SF Lambda, L args, L body ]) symbolTable
             , resultExpr = Ok expr
             }
 
@@ -45,10 +45,6 @@ evalResult resultExpr =
             Err error
 
         Ok expr ->
-            let
-                _ =
-                    Debug.log "EXPR (in evalResult)" expr
-            in
             case expr of
                 Z n ->
                     Ok (Z n)
@@ -80,22 +76,6 @@ evalResult resultExpr =
 
                 _ ->
                     Err <| EvalError 0 "Missing case"
-
-
-
--- L [ L [ SF Lambda, L params, L body ], arg ] ->
-
-
-bozo =
-    L [ SF Lambda, L [ Str "x", Str "y" ], L [ Sym "+", Str "x", Str "y" ] ]
-
-
-bobo =
-    L [ L [ SF Lambda, L [ Str "x", Str "y" ], L [ Sym "+", Str "x", Str "y" ] ], Z 5, Z 7 ]
-
-
-yolo =
-    L [ L [ SF Lambda, L [ Str "x" ], L [ Sym "*", Str "x", Str "x" ] ], Z 2 ]
 
 
 applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
@@ -163,7 +143,10 @@ display expr =
             s
 
         L [ SF Define, Str name, expr2 ] ->
-            "define " ++ name ++ " : " ++ display expr2
+            " -- " ++ name ++ " <- " ++ display expr2
+
+        L ((SF Define) :: (Str name) :: args :: body) ->
+            " -- " ++ name ++ ": defined"
 
         u ->
             "Unprocessable expression: " ++ Debug.toString u
