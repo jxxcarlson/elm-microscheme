@@ -1,6 +1,5 @@
 port module Main exposing (main)
 
-import BlackBox
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import MicroScheme.Interpreter as Interpreter
 import Platform exposing (Program)

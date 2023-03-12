@@ -12,5 +12,6 @@ type Expr
 
 type SpecialForm
     = Define
+    | Lambda
     | Display
     | If

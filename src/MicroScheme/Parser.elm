@@ -21,7 +21,7 @@ import Set
 -}
 parse : Dict String Expr -> String -> Result (List P.DeadEnd) Expr
 parse table str =
-    P.run exprParser str |> Result.map (Environment.resolveSymbols table)
+    P.run exprParser str |> Result.map (Environment.applyFrame table)
 
 
 exprParser : P.Parser Expr

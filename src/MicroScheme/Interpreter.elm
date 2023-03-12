@@ -52,7 +52,7 @@ step state =
     case Parser.parse state.symbolTable state.input of
         Err err ->
             { state
-                | output = "Error (1): " --  ++ Debug.toString err
+                | output = "Step error (1): " ++ Debug.toString err
             }
 
         Ok expr ->
@@ -60,9 +60,9 @@ step state =
                 data =
                     Eval.eval { symbolTable = state.symbolTable, expr = expr }
             in
-            case data.maybeExpr of
-                Nothing ->
-                    { state | symbolTable = data.symbolTable, output = "Error (step)" }
+            case data.resultExpr of
+                Err error ->
+                    { state | symbolTable = data.symbolTable, output = Debug.toString error }
 
-                Just value ->
-                    { state | symbolTable = data.symbolTable, output = Eval.display (Just value) }
+                Ok value ->
+                    { state | symbolTable = data.symbolTable, output = Eval.display value }
