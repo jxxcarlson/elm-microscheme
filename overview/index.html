@@ -242,7 +242,7 @@ type alias Bindings =
 </code></pre>
 <h2 id="numbers">Numbers</h2>
 <p>Module <code>Numbers</code> exports the type
-<code>NumberErrot</code> and the functions <code>coerce</code> and <code>roundTo</code>.</p>
+<code>NumberError</code> and the functions <code>coerce</code> and <code>roundTo</code>.</p>
 <pre><code class="language-elm">coerce : List Expr -&gt; Result NumberError (Either (List Int) (List Float))
 </code></pre>
 <ul>
@@ -266,7 +266,27 @@ of type <code>Right (List Float)</code>. </p>
 </li>
 </ul>
 <p>The function call <code>roundTo 2 x</code> returns the value 
-<code>x</code> rounded to two dedicmals.</p>
+<code>x</code> rounded to two decicmals.</p>
+<p><strong>Examples</strong></p>
+<p><em>No coercion:</em></p>
+<pre><code class="language-text">&gt; (+ 1 2)
+3
+
+&gt; (+ 1.003 2)
+3.003
+
+&gt; (+ 1.003 2.7)
+3.7030000000000003
+</code></pre>
+<p>In the last case, floating point arithmetic produces
+an incorrect result.  Better looking is the below</p>
+<pre><code class="language-text">&gt; (roundTo 2 (+ 1.003 2.7))
+3.7
+</code></pre>
+<p><em>Coercion:</em></p>
+<pre><code class="language-text">&gt; (+ 1.1 2)
+3.1
+</code></pre>
               
             </div>
           </div><footer>
