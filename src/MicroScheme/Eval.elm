@@ -1,7 +1,7 @@
 module MicroScheme.Eval exposing (eval)
 
 import MicroScheme.Error exposing (EvalError(..))
-import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
+import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 import MicroScheme.Function as Function
 import Result.Extra
@@ -54,32 +54,31 @@ evalResult resultExpr =
                 -- (L [SF If,L [L [SF Lambda,L [Str "n"],L [Sym "=",L [Sym "remainder",Str "n",Z 2],Z 0]],Z 4],Z 0,Z 1])
                 --L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                 --    Debug.todo "IF-LAMBDA"
-                L ((SF If) :: (L ((Sym name) :: args)) :: expr1 :: expr2 :: []) ->
-                    case eval (L (Sym name :: args)) of
-                        Err _ ->
-                            Err (EvalError 4 ("Error evaluating predicate: " ++ name))
-
-                        Ok truthValue ->
-                            case truthValue of
-                                B True ->
-                                    case eval expr1 of
-                                        Err _ ->
-                                            Err (EvalError 4 "True, error evaluating predicate")
-
-                                        Ok value ->
-                                            Ok value
-
-                                B False ->
-                                    case eval expr2 of
-                                        Err _ ->
-                                            Err (EvalError 4 "False, error evaluating predicate")
-
-                                        Ok value ->
-                                            Ok value
-
-                                _ ->
-                                    Err (EvalError 4 "False, error evaluating predicate")
-
+                --L ((SF If) :: (L ((Sym name) :: args)) :: expr1 :: expr2 :: []) ->
+                --    case eval (L (Sym name :: args)) of
+                --        Err _ ->
+                --            Err (EvalError 4 ("Error evaluating predicate: " ++ name))
+                --
+                --        Ok truthValue ->
+                --            case truthValue of
+                --                B True ->
+                --                    case eval expr1 of
+                --                        Err _ ->
+                --                            Err (EvalError 4 "True, error evaluating predicate")
+                --
+                --                        Ok value ->
+                --                            Ok value
+                --
+                --                B False ->
+                --                    case eval expr2 of
+                --                        Err _ ->
+                --                            Err (EvalError 4 "False, error evaluating predicate")
+                --
+                --                        Ok value ->
+                --                            Ok value
+                --
+                --                _ ->
+                --                    Err (EvalError 4 "False, error evaluating predicate")
                 L ((Str name) :: rest) ->
                     Err <| EvalError 0 ("Unknown symbol: " ++ name)
 

@@ -2,7 +2,7 @@ module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
-import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
+import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Parser as Parser
 
 
@@ -86,9 +86,8 @@ step state =
 
         Ok expr ->
             case expr of
-                L [ SF Define, Str name, expr_ ] ->
-                    { state | environment = Environment.addSymbolToRoot name expr_ state.environment, output = name }
-
+                --L [ SF Define, Str name, expr_ ] ->
+                --    { state | environment = Environment.addSymbolToRoot name expr_ state.environment, output = name }
                 --L [ SF Define, L ((Str name) :: args), L body ] ->
                 --    { state
                 --        | environment =
@@ -129,11 +128,10 @@ display expr =
         Sym s ->
             s
 
-        L [ SF Define, Str name, expr2 ] ->
-            " -- " ++ name ++ " <- " ++ display expr2
-
-        L ((SF Define) :: (Str name) :: args :: body) ->
-            " -- " ++ name ++ ": defined"
-
+        --L [ SF Define, Str name, expr2 ] ->
+        --    " -- " ++ name ++ " <- " ++ display expr2
+        --
+        --L ((SF Define) :: (Str name) :: args :: body) ->
+        --    " -- " ++ name ++ ": defined"
         u ->
             "Unprocessable expression: " ++ Debug.toString u
