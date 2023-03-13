@@ -1,12 +1,12 @@
-module MicroScheme.Init exposing (symbolTable)
+module MicroScheme.Init exposing (rootFrame)
 
 import Dict
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 
 
-symbolTable : Frame
-symbolTable =
+rootFrame : Frame
+rootFrame =
     { id = 0
     , bindings =
         Dict.fromList

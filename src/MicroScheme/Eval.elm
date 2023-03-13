@@ -71,6 +71,8 @@ evalResult resultExpr =
 applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
 applyLambda params body args =
     let
+        -- `A throw-away frame. It will never be used
+        -- outside of this function.
         frameResult : Result Frame.FrameError Frame.Frame
         frameResult =
             Frame.addBindings (Frame.varNames params) args Frame.empty
@@ -81,10 +83,6 @@ applyLambda params body args =
 
         Ok frame ->
             Ok (List.map (Frame.resolve frame) body |> L)
-
-
-
--- |> Result.mapError (\err -> F err)
 
 
 evalPlus : List Expr -> Result EvalError Expr

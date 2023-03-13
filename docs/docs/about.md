@@ -35,16 +35,16 @@ a short session with the interpreter.
 ----------------------------------------------------------------------------------
 File                                           blank        comment           code
 ----------------------------------------------------------------------------------
-src/MicroScheme/Eval.elm                          40             10             92
-src/MicroScheme/Frame.elm                         25              0             64
+src/MicroScheme/Eval.elm                          37             11             92
+src/MicroScheme/Frame.elm                         29              0             73
 src/MicroScheme/Parser.elm                        28             11             56
-src/MicroScheme/Interpreter.elm                   18             14             43
+src/MicroScheme/Interpreter.elm                   25             20             52
+src/MicroScheme/Environment.elm                   19              0             48
 src/Main.elm                                      22              0             41
-src/MicroScheme/Environment.elm                    9              0             19
 src/MicroScheme/Expr.elm                           4              0             13
-src/MicroScheme/Init.elm                           3              0             10
+src/MicroScheme/Init.elm                           3              0             13
 ----------------------------------------------------------------------------------
-SUM:                                             149             35            338
+SUM:                                             167             42            388
 ----------------------------------------------------------------------------------
 ```
 

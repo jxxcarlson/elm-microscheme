@@ -13,7 +13,6 @@ type alias State =
     { input : String
     , output : String
     , environment : Environment
-    , rootFrame : Frame
     }
 
 
@@ -22,7 +21,6 @@ init str =
     { input = str
     , output = ""
     , environment = Environment.initial
-    , rootFrame = Init.symbolTable
     }
 
 
@@ -76,7 +74,7 @@ runProgram separator inputString =
 -}
 step : State -> State
 step state =
-    case Parser.parse state.rootFrame state.input of
+    case Parser.parse (Environment.root state.environment) state.input of
         Err err ->
             { state
                 | output = "Step error (1): " ++ Debug.toString err
@@ -85,10 +83,10 @@ step state =
         Ok expr ->
             case expr of
                 L [ SF Define, Str name, expr_ ] ->
-                    { state | rootFrame = Frame.addSymbol name expr_ state.rootFrame, output = name }
+                    { state | environment = Environment.addSymbolToRoot name expr_ state.environment, output = name }
 
                 L [ SF Define, L ((Str name) :: args), L body ] ->
-                    { state | rootFrame = Frame.addSymbol name (L [ SF Lambda, L args, L body ]) state.rootFrame, output = name }
+                    { state | environment = Environment.addSymbolToRoot name (L [ SF Lambda, L args, L body ]) state.environment, output = name }
 
                 _ ->
                     case Eval.eval expr of

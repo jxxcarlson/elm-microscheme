@@ -1,6 +1,7 @@
 module MicroScheme.Frame exposing
     ( Frame
     , FrameError(..)
+    , FrameId
     , addBinding
     , addBindings
     , addSymbol
@@ -15,9 +16,13 @@ import MicroScheme.Expr exposing (Expr(..))
 
 
 type alias Frame =
-    { id : Int
+    { id : FrameId
     , bindings : Bindings
     }
+
+
+type alias FrameId =
+    Int
 
 
 type alias Bindings =
