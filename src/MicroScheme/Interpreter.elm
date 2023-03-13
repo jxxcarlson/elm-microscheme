@@ -74,7 +74,7 @@ step state =
     case Parser.parse (Environment.root state.environment) state.input of
         Err err ->
             { state
-                | output = "Step error (1): " ++ Debug.toString err
+                | output = "Parse error: " ++ Debug.toString err
             }
 
         Ok expr ->

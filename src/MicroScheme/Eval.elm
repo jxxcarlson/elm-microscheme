@@ -52,6 +52,9 @@ evalResult resultExpr =
                 L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                     applyLambda params body args |> evalResult
 
+                L ((Str name) :: rest) ->
+                    Err <| EvalError 0 ("Unknown symbol: " ++ name)
+
                 _ ->
                     Err <| EvalError 0 "Missing case (eval)"
 
