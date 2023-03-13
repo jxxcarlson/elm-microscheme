@@ -28,7 +28,18 @@ functionDict =
         , ( ">", gtPredicate )
         , ( "<=", ltePredicate )
         , ( ">=", gtePredicate )
+        , ( "remainder", remainder )
         ]
+
+
+remainder : List Expr -> Result EvalError Expr
+remainder exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (Z (modBy b a))
+
+        _ ->
+            Err (EvalError 1 "bad arguments to: remainder")
 
 
 ltPredicate : List Expr -> Result EvalError Expr

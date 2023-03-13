@@ -28,6 +28,13 @@ input str state =
 
 {-|
 
+    TODO: BUG
+    > (define (isEven x ) ((remainder x 2 ) = 0 ) )
+    ENV: Zipper { after = [], before = [], crumbs = [], focus = Tree { bindings = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("<",Sym "<"),("<=",Sym "<="),("=",Sym "="),(">",Sym ">"),(">=",Sym ">="),("isEven",L [SF Lambda,L [Str "x"],L [L [Sym "remainder",Str "x",Z 2],Sym "=",Z 0]]),("remainder",Sym "remainder"),("roundTo",Sym "roundTo"),("square",L [SF Lambda,L [Str "x"],L [Sym "*",Str "x",Str "x"]])], id = 0 } [] }
+    isEven
+    > (isEven 2)
+    EvalError 0 "Missing case (eval)"
+
     > runProgram ";" "(define x 5); (* 5 5)"
     "25"
 
@@ -82,35 +89,14 @@ step state =
                 L [ SF Define, Str name, expr_ ] ->
                     { state | environment = Environment.addSymbolToRoot name expr_ state.environment, output = name }
 
-                L [ SF Define, L ((Str name) :: args), L body ] ->
-                    { state | environment = Environment.addSymbolToRoot name (L [ SF Lambda, L args, L body ]) state.environment, output = name }
-
-                L ((SF If) :: (L ((Sym name) :: args)) :: expr1 :: expr2 :: []) ->
-                    case Eval.eval (L (Sym name :: args)) of
-                        Err _ ->
-                            { state | output = "Error evaluating predicate: " ++ name }
-
-                        Ok truthValue ->
-                            case truthValue of
-                                B True ->
-                                    case Eval.eval expr1 of
-                                        Err _ ->
-                                            { state | output = "Error evaluating first argument of 'If'" }
-
-                                        Ok value ->
-                                            { state | output = display value }
-
-                                B False ->
-                                    case Eval.eval expr2 of
-                                        Err _ ->
-                                            { state | output = "Error evaluating first argument of 'If'" }
-
-                                        Ok value ->
-                                            { state | output = display value }
-
-                                _ ->
-                                    { state | output = "Error evaluating predicate" }
-
+                --L [ SF Define, L ((Str name) :: args), L body ] ->
+                --    { state
+                --        | environment =
+                --            Environment.addSymbolToRoot name
+                --                (L [ SF Lambda, L args, L body ])
+                --                state.environment
+                --        , output = name
+                --    }
                 _ ->
                     case Eval.eval expr of
                         Err error ->

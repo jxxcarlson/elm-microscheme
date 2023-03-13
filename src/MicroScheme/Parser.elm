@@ -1,4 +1,6 @@
-module MicroScheme.Parser exposing (exprParser, parse)
+module MicroScheme.Parser exposing (..)
+
+-- (exprParser, parse)
 
 import MicroScheme.Expr as Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
@@ -7,6 +9,10 @@ import Set
 
 
 {-|
+
+    TODO: BUG!
+    > (define (isEven n) (= (remainder n 2) 0))
+    Parse error: [{ col = 1, problem = ExpectingSymbol ")", row = 2 }]
 
     > parse symbolTable "(plus 33 44)"
     Ok (L [Sym "plus",Z 33,Z 44])
@@ -20,32 +26,59 @@ import Set
 -}
 parse : Frame -> String -> Result (List P.DeadEnd) Expr
 parse frame str =
-    P.run exprParser str |> Result.map (Frame.resolve frame)
+    P.run exprParser str |> Result.map (Frame.resolve frame) |> Debug.log "PARSE"
 
 
 exprParser : P.Parser Expr
 exprParser =
     P.oneOf
-        [ specialFormParser
+        [ lambdaParser
+        , defineParser
+        , ifParser
         , P.lazy (\_ -> listParser)
         , P.backtrackable intParser
         , floatParser
         , stringParser
+        , P.lazy (\_ -> defineParser)
         ]
 
 
-specialFormParser =
-    P.oneOf [ P.map SF defineParser, P.map SF ifParser ]
-
-
-defineParser : P.Parser Expr.SpecialForm
-defineParser =
-    P.map (\_ -> Expr.Define) (P.symbol "define")
-
-
-ifParser : P.Parser Expr.SpecialForm
+ifParser : P.Parser Expr
 ifParser =
-    P.map (\_ -> Expr.If) (P.symbol "if")
+    P.succeed If
+        |. P.symbol "(if "
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |. P.symbol ")"
+
+
+defineParser : P.Parser Expr
+defineParser =
+    P.succeed Define
+        |. P.symbol "(define "
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |. P.symbol ")"
+
+
+lambdaParser : P.Parser Expr
+lambdaParser =
+    P.succeed Lambda
+        |. P.symbol "(lambda "
+        |. P.spaces
+        |= P.lazy (\_ -> listParser)
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |. P.symbol ")"
 
 
 listParser : P.Parser Expr
@@ -66,19 +99,43 @@ floatParser =
     P.map F P.float
 
 
-stringParser : P.Parser Expr
-stringParser =
+stringParser1 : P.Parser Expr
+stringParser1 =
     P.map Str
         (P.variable
-            { start = \c -> not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
-            , inner = \c -> c /= ' '
+            { start = \c -> Char.isAlpha c || List.member c [ '=', '<', '>' ]
+
+            -- not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
+            , inner = \c -> Char.isAlphaNum c && (c /= ')')
             , reserved = Set.fromList [ "eval", "define", "if", "display" ]
             }
         )
 
 
+stringParser : P.Parser Expr
+stringParser =
+    let
+        prefix =
+            \c -> not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
+
+        continue =
+            \c -> not <| List.member c [ ' ', ')' ]
+    in
+    text prefix continue |> P.map Str
+
+
 
 -- HELPERS
+
+
+text : (Char -> Bool) -> (Char -> Bool) -> P.Parser String
+text prefix continue =
+    P.succeed (\start finish content -> String.slice start finish content)
+        |= P.getOffset
+        |. P.chompIf (\c -> prefix c)
+        |. P.chompWhile (\c -> continue c)
+        |= P.getOffset
+        |= P.getSource
 
 
 {-| Apply a parser zero or more times and return a list of the results.

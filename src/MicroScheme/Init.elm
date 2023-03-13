@@ -14,6 +14,7 @@ symbolStrings =
     , "<="
     , ">="
     , "roundTo"
+    , "remainder"
     ]
 
 

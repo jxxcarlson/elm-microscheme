@@ -1,4 +1,4 @@
-module MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
+module MicroScheme.Expr exposing (Expr(..))
 
 
 type Expr
@@ -8,11 +8,6 @@ type Expr
     | Str String
     | Sym String
     | L (List Expr)
-    | SF SpecialForm
-
-
-type SpecialForm
-    = Define
-    | Lambda
-    | Display
-    | If
+    | Lambda Expr Expr
+    | Define Expr Expr
+    | If Expr Expr Expr
