@@ -1,6 +1,5 @@
 module MicroScheme.Parser exposing (exprParser, parse)
 
-import Dict exposing (Dict)
 import MicroScheme.Expr as Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 import Parser as P exposing ((|.), (|=))

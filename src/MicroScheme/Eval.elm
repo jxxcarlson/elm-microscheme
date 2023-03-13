@@ -1,4 +1,4 @@
-module MicroScheme.Eval exposing (display, eval)
+module MicroScheme.Eval exposing (eval)
 
 import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
@@ -42,34 +42,24 @@ evalResult resultExpr =
                     Ok (Sym s)
 
                 L ((Sym "+") :: rest) ->
-                    let
-                        args : Result EvalError (List Expr)
-                        args =
-                            List.map (evalResult << Ok) rest |> Result.Extra.combine
-                    in
-                    Result.map Function.evalPlus args |> Result.Extra.join
+                    Result.map Function.evalPlus (evalArgs rest) |> Result.Extra.join
 
                 L ((Sym "*") :: rest) ->
-                    let
-                        args : Result EvalError (List Expr)
-                        args =
-                            List.map (evalResult << Ok) rest |> Result.Extra.combine
-                    in
-                    Result.map Function.evalTimes args |> Result.Extra.join
+                    Result.map Function.evalTimes (evalArgs rest) |> Result.Extra.join
 
                 L ((Sym "roundTo") :: rest) ->
-                    let
-                        args : Result EvalError (List Expr)
-                        args =
-                            List.map (evalResult << Ok) rest |> Result.Extra.combine
-                    in
-                    Result.map Function.roundTo args |> Result.Extra.join
+                    Result.map Function.roundTo (evalArgs rest) |> Result.Extra.join
 
                 L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                     applyLambda params body args |> evalResult
 
                 _ ->
-                    Err <| EvalError 0 "Missing case"
+                    Err <| EvalError 0 "Missing case (eval)"
+
+
+evalArgs : List Expr -> Result EvalError (List Expr)
+evalArgs args =
+    List.map (evalResult << Ok) args |> Result.Extra.combine
 
 
 applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
@@ -87,28 +77,3 @@ applyLambda params body args =
 
         Ok frame ->
             Ok (List.map (Frame.resolve frame) body |> L)
-
-
-display : Expr -> String
-display expr =
-    case expr of
-        Z n ->
-            String.fromInt n
-
-        F x ->
-            String.fromFloat x
-
-        Str s ->
-            s
-
-        Sym s ->
-            s
-
-        L [ SF Define, Str name, expr2 ] ->
-            " -- " ++ name ++ " <- " ++ display expr2
-
-        L ((SF Define) :: (Str name) :: args :: body) ->
-            " -- " ++ name ++ ": defined"
-
-        u ->
-            "Unprocessable expression: " ++ Debug.toString u

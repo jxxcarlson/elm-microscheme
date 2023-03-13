@@ -2,7 +2,7 @@ scripts:
 
   # Velociraptor scripts
 
-  cloc: cloc --by-file src/*.elm src/MicroScheme/*.elm
+  cloc: cloc --by-file src/Main.elm src/repl.js src/MicroScheme/*.elm
 
   compile:
     - elm make src/Main.elm --output=src/main.js

@@ -1,11 +1,8 @@
 module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 
-import Dict
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
-import MicroScheme.Expr as Expr exposing (Expr(..), SpecialForm(..))
-import MicroScheme.Frame as Frame exposing (Frame)
-import MicroScheme.Init as Init
+import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
 import MicroScheme.Parser as Parser
 
 
@@ -94,4 +91,29 @@ step state =
                             { state | output = Debug.toString error }
 
                         Ok value ->
-                            { state | output = Eval.display value }
+                            { state | output = display value }
+
+
+display : Expr -> String
+display expr =
+    case expr of
+        Z n ->
+            String.fromInt n
+
+        F x ->
+            String.fromFloat x
+
+        Str s ->
+            s
+
+        Sym s ->
+            s
+
+        L [ SF Define, Str name, expr2 ] ->
+            " -- " ++ name ++ " <- " ++ display expr2
+
+        L ((SF Define) :: (Str name) :: args :: body) ->
+            " -- " ++ name ++ ": defined"
+
+        u ->
+            "Unprocessable expression: " ++ Debug.toString u
