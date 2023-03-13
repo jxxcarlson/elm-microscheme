@@ -7,7 +7,10 @@ import MicroScheme.Frame as Frame exposing (Frame)
 
 symbolTable : Frame
 symbolTable =
-    Dict.fromList
-        [ ( "+", Sym "+" )
-        , ( "*", Sym "*" )
-        ]
+    { id = 0
+    , bindings =
+        Dict.fromList
+            [ ( "+", Sym "+" )
+            , ( "*", Sym "*" )
+            ]
+    }

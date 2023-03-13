@@ -2,7 +2,7 @@ module MicroScheme.Parser exposing (exprParser, parse)
 
 import Dict exposing (Dict)
 import MicroScheme.Expr as Expr exposing (Expr(..))
-import MicroScheme.Frame as Frame
+import MicroScheme.Frame as Frame exposing (Frame)
 import Parser as P exposing ((|.), (|=))
 import Set
 
@@ -19,9 +19,9 @@ import Set
     Ok (L [Sym "plus",Sym "x",Z 2])
 
 -}
-parse : Dict String Expr -> String -> Result (List P.DeadEnd) Expr
-parse table str =
-    P.run exprParser str |> Result.map (Frame.apply table)
+parse : Frame -> String -> Result (List P.DeadEnd) Expr
+parse frame str =
+    P.run exprParser str |> Result.map (Frame.resolve frame)
 
 
 exprParser : P.Parser Expr

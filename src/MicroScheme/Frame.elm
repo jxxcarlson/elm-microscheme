@@ -4,8 +4,8 @@ module MicroScheme.Frame exposing
     , addBinding
     , addBindings
     , addSymbol
-    , apply
     , empty
+    , resolve
     , varNames
     )
 
@@ -15,6 +15,12 @@ import MicroScheme.Expr exposing (Expr(..))
 
 
 type alias Frame =
+    { id : Int
+    , bindings : Bindings
+    }
+
+
+type alias Bindings =
     Dict String Expr
 
 
@@ -23,12 +29,14 @@ type FrameError
 
 
 empty =
-    Dict.empty
+    { id = -1
+    , bindings = Dict.empty
+    }
 
 
 addBinding : ( String, Expr ) -> Frame -> Frame
 addBinding ( str, expr ) frame =
-    Dict.insert str expr frame
+    { frame | bindings = Dict.insert str expr frame.bindings }
 
 
 addBindings : List String -> List Expr -> Frame -> Result FrameError Frame
@@ -67,15 +75,15 @@ varName expr =
 
 
 addSymbol : String -> Expr -> Frame -> Frame
-addSymbol str expr table =
-    Dict.insert str expr table
+addSymbol str expr frame =
+    { frame | bindings = Dict.insert str expr frame.bindings }
 
 
-apply : Frame -> Expr -> Expr
-apply frame expr =
+resolve : Frame -> Expr -> Expr
+resolve frame expr =
     case expr of
         Str s ->
-            case Dict.get s frame of
+            case Dict.get s frame.bindings of
                 Nothing ->
                     expr
 
@@ -83,7 +91,7 @@ apply frame expr =
                     expr2
 
         L list ->
-            L (List.map (apply frame) list)
+            L (List.map (resolve frame) list)
 
         _ ->
             expr

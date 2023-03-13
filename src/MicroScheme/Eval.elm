@@ -80,7 +80,7 @@ applyLambda params body args =
             Err frameError |> Result.mapError (\err -> FR err)
 
         Ok frame ->
-            Ok (List.map (Frame.apply frame) body |> L)
+            Ok (List.map (Frame.resolve frame) body |> L)
 
 
 

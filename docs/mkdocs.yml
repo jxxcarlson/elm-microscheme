@@ -5,4 +5,5 @@ theme: readthedocs
 nav:
   - Home: 'about.md'
   - Overview: 'overview.md'
+  - Notes: 'notes.md'
   - Mkdocs:  'index.md'
