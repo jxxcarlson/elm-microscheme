@@ -57,6 +57,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#frames-and-environments">Frames and Environments</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#numbers">Numbers</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -117,14 +119,86 @@ parse table str =
 <p>The first argument of <code>parse</code> is the root frame, which
 is used to map certain values to symbols, e.g.,
 <code>Str "+"</code> to <code>Sym "+"</code>.  Thus we have</p>
-<pre><code class="language-elm">&gt; parse symbolTable &quot;(+ 1 2)&quot;
+<pre><code class="language-elm">&gt; import MicroScheme.Parser exposing(parse)
+&gt; import MicroScheme.Init exposing(rootFrame)
+
+&gt; parse rootFrame &quot;(+ 1 2)&quot;
 Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
+
 </code></pre>
 <h2 id="eval">Eval</h2>
+<p>The module <code>Eval</code> exports just one function,</p>
 <pre><code class="language-elm">eval : Expr -&gt; Result EvalError Expr
 </code></pre>
+<p>It calls <code>evalResult</code>, which is a long exercise
+in pattern-matching:</p>
+<pre><code class="language-elm">evalResult : Result EvalError Expr -&gt; Result EvalError Expr
+evalResult resultExpr =
+    case resultExpr of
+        Err error -&gt;
+            Err error
+
+        Ok expr -&gt;
+            case expr of
+                Z n -&gt;
+                    Ok (Z n)
+
+                F r -&gt;
+                    Ok (F r)
+
+                Sym s -&gt;
+                    Ok (Sym s)
+
+                L ((Sym name) :: rest) -&gt;
+                    case Function.dispatch name of
+                        Err _ -&gt;
+                            Err (EvalError 3 (&quot;dispatch &quot; ++ name ++ &quot; did not return a value&quot;))
+
+                        Ok f -&gt;
+                            Result.map f (evalArgs rest) |&gt; Result.Extra.join
+
+                L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) -&gt;
+                    applyLambda params body args |&gt; evalResult
+
+                _ -&gt;
+                    Err &lt;| EvalError 0 &quot;Missing case (eval)&quot;
+</code></pre>
+<p>In the above code, <code>Function.dispatch</code> takes a function name as input
+and produces a value of type
+<code>Result EvalError (List Expr -&gt; Result EvalError Expr)</code>
+as output.
+The function <code>evalArgs</code> evaluates the arguments of
+the function called:</p>
+<pre><code class="language-elm">evalArgs : List Expr -&gt; Result EvalError (List Expr)
+evalArgs args =
+    List.map (evalResult &lt;&lt; Ok) args |&gt; Result.Extra.combine
+</code></pre>
+<p>The function <code>applyLambda</code>  creates a temporary frame with
+bindings for the variable names and arguments of the 
+lambda expression, then uses that frame to
+resolve the names which appear in the function
+body.</p>
+<pre><code class="language-elm">applyLambda : List Expr -&gt; List Expr -&gt; List Expr -&gt; Result EvalError Expr
+applyLambda params body args =
+    let
+        frameResult : Result Frame.FrameError Frame.Frame
+        frameResult =
+            Frame.addBindings (Frame.varNames params) args Frame.empty
+    in
+    case frameResult of
+        Err frameError -&gt;
+            Err frameError |&gt; Result.mapError (\err -&gt; FR err)
+
+        Ok frame -&gt;
+            Ok (List.map (Frame.resolve frame) body |&gt; L)
+</code></pre>
+<p>The <code>Function</code> module exports built-in functions for
+use by <code>eval</code>, e.g., <code>Function.plus</code> and <code>Function.times</code>.
+To add a new function to MicroScheme, add an 
+implementation of it to module <code>Function</code> and add its
+name to <code>symbolStrings</code> in module <code>Init</code>.</p>
 <h2 id="interpreter">Interpreter</h2>
-<p>The interpreter is governed by the three functoions</p>
+<p>The interpreter is governed by the three functions</p>
 <pre><code class="language-elm">init : State
 input : String -&gt; State -&gt; State
 step : State -&gt; State
@@ -134,15 +208,31 @@ step : State -&gt; State
     { input : String
     , output : String
     , environment : Environment
-    , rootFrame : Frame
     }
 </code></pre>
-<p>The root frame maps names to symbols for top level
-names such as <code>"+"</code> and <code>"*"</code> as in <code>"( 1 2 3)"</code>.
-At the moment we do not use the environment field.</p>
+<p>The function <code>init</code> returns a state in which
+the input and output fields are empty strings
+and the environment is a tree with one node, 
+the <code>rootFrame</code>.  The root frame holds a dictionary
+that maps strings to symbols, e.g., "+" to <code>Sym "+"</code>.</p>
+<p>The function <code>input</code> accepts a strings and sets the
+field <code>input</code> to it.</p>
+<p>The function <code>step</code> runs the parse on <code>input</code>, 
+runs <code>eval</code> on the result, and puts a string
+version of the result in <code>output</code>.</p>
 <h2 id="frames-and-environments">Frames and Environments</h2>
 <p>A <em>frame</em> binds expressions to names:</p>
 <pre><code class="language-elm">type alias Frame =
+    { id : FrameId
+    , bindings : Bindings
+    }
+
+
+type alias FrameId =
+    Int
+
+
+type alias Bindings =
     Dict String Expr
 </code></pre>
 <p>An <em>environment</em> is a tree of frames with a distinguished
@@ -150,6 +240,33 @@ At the moment we do not use the environment field.</p>
 <pre><code class="language-elm">type alias Environment =
     Zipper Frame
 </code></pre>
+<h2 id="numbers">Numbers</h2>
+<p>Module <code>Numbers</code> exports the type
+<code>NumberErrot</code> and the functions <code>coerce</code> and <code>roundTo</code>.</p>
+<pre><code class="language-elm">coerce : List Expr -&gt; Result NumberError (Either (List Int) (List Float))
+</code></pre>
+<ul>
+<li>
+<p>If the argument of <code>coerce</code> is a list of <code>Z Int</code>,
+it returns  a <code>Left (List Int)</code> value.  </p>
+</li>
+<li>
+<p>If it is 
+a list o <code>F Float</code>, it returns a value of type
+<code>Right (List Float)</code>.  </p>
+</li>
+<li>
+<p>If it is a list of values of types
+<code>Z Int</code> and <code>F Float</code>, it coerces the values 
+of type <code>Z Int</code>to <code>Z Float</code> and returns a value
+of type <code>Right (List Float)</code>. </p>
+</li>
+<li>
+<p>In all other cases it return <code>Left NotAllNumbers</code></p>
+</li>
+</ul>
+<p>The function call <code>roundTo 2 x</code> returns the value 
+<code>x</code> rounded to two dedicmals.</p>
               
             </div>
           </div><footer>
