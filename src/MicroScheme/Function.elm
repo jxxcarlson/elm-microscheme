@@ -23,7 +23,21 @@ functionDict =
         [ ( "+", evalPlus )
         , ( "*", evalTimes )
         , ( "roundTo", roundTo )
+        , ( "=", equalNumbers )
         ]
+
+
+equalNumbers : List Expr -> Result EvalError Expr
+equalNumbers exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (B (a == b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (B (a == b))
+
+        _ ->
+            Ok (B False)
 
 
 roundTo : List Expr -> Result EvalError Expr

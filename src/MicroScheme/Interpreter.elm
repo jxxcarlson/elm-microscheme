@@ -103,6 +103,14 @@ display expr =
         F x ->
             String.fromFloat x
 
+        B b ->
+            case b of
+                True ->
+                    "True"
+
+                False ->
+                    "False"
+
         Str s ->
             s
 
