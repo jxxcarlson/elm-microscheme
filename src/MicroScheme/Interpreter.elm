@@ -1,4 +1,4 @@
-module MicroScheme.Interpreter exposing (State, init, input, step)
+module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 
 import Dict
 import MicroScheme.Environment as Environment exposing (Environment)
@@ -29,6 +29,30 @@ init str =
 input : String -> State -> State
 input str state =
     { state | input = str }
+
+
+{-|
+
+    > runProgram ";" "(define x 5); (* 5 5)"
+    "25"
+
+    > runProgram "\n" "(define x 5)\n (* 5 5)"
+    "25"
+
+-}
+runProgram : String -> String -> String
+runProgram separator inputString =
+    let
+        inputList =
+            inputString |> String.split separator |> List.map String.trim
+
+        initialState =
+            init ""
+
+        finalState =
+            List.foldl (\str state_ -> state_ |> input str |> step) initialState inputList
+    in
+    finalState.output
 
 
 {-|
