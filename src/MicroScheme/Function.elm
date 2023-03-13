@@ -24,7 +24,63 @@ functionDict =
         , ( "*", evalTimes )
         , ( "roundTo", roundTo )
         , ( "=", equalNumbers )
+        , ( "<", ltPredicate )
+        , ( ">", gtPredicate )
+        , ( "<=", ltePredicate )
+        , ( ">=", gtePredicate )
         ]
+
+
+ltPredicate : List Expr -> Result EvalError Expr
+ltPredicate exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (B (a < b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (B (a < b))
+
+        _ ->
+            Ok (B False)
+
+
+gtPredicate : List Expr -> Result EvalError Expr
+gtPredicate exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (B (a > b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (B (a > b))
+
+        _ ->
+            Ok (B False)
+
+
+ltePredicate : List Expr -> Result EvalError Expr
+ltePredicate exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (B (a <= b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (B (a <= b))
+
+        _ ->
+            Ok (B False)
+
+
+gtePredicate : List Expr -> Result EvalError Expr
+gtePredicate exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (B (a >= b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (B (a >= b))
+
+        _ ->
+            Ok (B False)
 
 
 equalNumbers : List Expr -> Result EvalError Expr

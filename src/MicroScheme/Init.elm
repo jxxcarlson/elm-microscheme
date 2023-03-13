@@ -6,7 +6,15 @@ import MicroScheme.Frame as Frame exposing (Frame)
 
 
 symbolStrings =
-    [ "+", "*", "roundTo", "=" ]
+    [ "+"
+    , "*"
+    , "="
+    , "<"
+    , ">"
+    , "<="
+    , ">="
+    , "roundTo"
+    ]
 
 
 symbols =
