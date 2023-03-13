@@ -188,3 +188,29 @@ An *environment* is a tree of frames with a distinguished
 type alias Environment =
     Zipper Frame
 ```
+
+## Numbers
+
+Module `Numbers` exports the type
+`NumberErrot` and the functions `coerce` and `roundTo`.
+
+```elm
+coerce : List Expr -> Result NumberError (Either (List Int) (List Float))
+```
+
+- If the argument of `coerce` is a list of `Z Int`,
+it returns  a `Left (List Int)` value.  
+
+- If it is 
+a list o `F Float`, it returns a value of type
+`Right (List Float)`.  
+
+- If it is a list of values of types
+`Z Int` and `F Float`, it coerces the values 
+of type `Z Int`to `Z Float` and returns a value
+of type `Right (List Float)`. 
+
+- In all other cases it return `Left NotAllNumbers`
+
+The function call `roundTo 2 x` returns the value 
+`x` rounded to two dedicmals.

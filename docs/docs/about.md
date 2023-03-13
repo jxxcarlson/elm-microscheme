@@ -36,19 +36,19 @@ a short session with the interpreter.
 File                                           blank        comment           code
 ----------------------------------------------------------------------------------
 src/MicroScheme/Numbers.elm                       45              1            107
-src/MicroScheme/Eval.elm                          27             11             76
 src/MicroScheme/Frame.elm                         29              0             73
-src/MicroScheme/Parser.elm                        28             11             56
-src/MicroScheme/Interpreter.elm                   25             20             52
+src/MicroScheme/Interpreter.elm                   33             20             66
+src/MicroScheme/Parser.elm                        28             11             55
 src/MicroScheme/Environment.elm                   19              0             48
+src/MicroScheme/Eval.elm                          20             11             47
+src/MicroScheme/Function.elm                      17              0             45
 src/Main.elm                                      22              0             41
-src/MicroScheme/Function.elm                      12              0             34
+src/repl.js                                        8              4             19
 src/MicroScheme/Expr.elm                           4              0             13
 src/MicroScheme/Init.elm                           7              0             13
 src/MicroScheme/Error.elm                          3              0              5
 ----------------------------------------------------------------------------------
-SUM:                                             221             43            518
-----------------------------------------------------------------------------------
+SUM:                                             235             47            532
 ```
 
 
