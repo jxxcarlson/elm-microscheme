@@ -35,12 +35,17 @@ exprParser =
 
 
 specialFormParser =
-    P.oneOf [ P.map SF defineParser ]
+    P.oneOf [ P.map SF defineParser, P.map SF ifParser ]
 
 
 defineParser : P.Parser Expr.SpecialForm
 defineParser =
     P.map (\_ -> Expr.Define) (P.symbol "define")
+
+
+ifParser : P.Parser Expr.SpecialForm
+ifParser =
+    P.map (\_ -> Expr.If) (P.symbol "if")
 
 
 listParser : P.Parser Expr
@@ -67,7 +72,7 @@ stringParser =
         (P.variable
             { start = \c -> not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
             , inner = \c -> c /= ' '
-            , reserved = Set.fromList [ "eval", "define", "display" ]
+            , reserved = Set.fromList [ "eval", "define", "if", "display" ]
             }
         )
 
