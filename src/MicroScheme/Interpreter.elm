@@ -85,6 +85,32 @@ step state =
                 L [ SF Define, L ((Str name) :: args), L body ] ->
                     { state | environment = Environment.addSymbolToRoot name (L [ SF Lambda, L args, L body ]) state.environment, output = name }
 
+                L ((SF If) :: (L ((Sym name) :: args)) :: expr1 :: expr2 :: []) ->
+                    case Eval.eval (L (Sym name :: args)) of
+                        Err _ ->
+                            { state | output = "Error evaluating predicate: " ++ name }
+
+                        Ok truthValue ->
+                            case truthValue of
+                                B True ->
+                                    case Eval.eval expr1 of
+                                        Err _ ->
+                                            { state | output = "Error evaluating first argument of 'If'" }
+
+                                        Ok value ->
+                                            { state | output = display value }
+
+                                B False ->
+                                    case Eval.eval expr2 of
+                                        Err _ ->
+                                            { state | output = "Error evaluating first argument of 'If'" }
+
+                                        Ok value ->
+                                            { state | output = display value }
+
+                                _ ->
+                                    { state | output = "Error evaluating predicate" }
+
                 _ ->
                     case Eval.eval expr of
                         Err error ->
