@@ -26,6 +26,6 @@ function myWriter(output) {
   return output
 }
 
-console.log("\n----------------------------\nMicroScheme Interpreter V0.1\n\nExample: > (+ 1 2 3)\n----------------------------\n")
+console.log("\n----------------------------\nMicroScheme Interpreter V0.1.2\n\nExample: > (+ 1 2 3)\n----------------------------\n")
 
 repl.start({ prompt: '> ', eval: eval, writer: myWriter});

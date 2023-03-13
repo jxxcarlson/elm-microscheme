@@ -1,13 +1,29 @@
-module MicroScheme.Function exposing
-    ( evalPlus
-    , evalTimes
-    , roundTo
-    )
+module MicroScheme.Function exposing (dispatch)
 
+import Dict exposing (Dict)
 import Either exposing (Either(..))
 import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Numbers as Numbers
+
+
+dispatch : String -> Result EvalError (List Expr -> Result EvalError Expr)
+dispatch functionName =
+    case Dict.get functionName functionDict of
+        Nothing ->
+            Err (EvalError 2 ("eval dispatch, no such function: " ++ functionName))
+
+        Just f ->
+            Ok f
+
+
+functionDict : Dict String (List Expr -> Result EvalError Expr)
+functionDict =
+    Dict.fromList
+        [ ( "+", evalPlus )
+        , ( "*", evalTimes )
+        , ( "roundTo", roundTo )
+        ]
 
 
 roundTo : List Expr -> Result EvalError Expr

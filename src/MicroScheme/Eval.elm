@@ -41,14 +41,13 @@ evalResult resultExpr =
                 Sym s ->
                     Ok (Sym s)
 
-                L ((Sym "+") :: rest) ->
-                    Result.map Function.evalPlus (evalArgs rest) |> Result.Extra.join
+                L ((Sym name) :: rest) ->
+                    case Function.dispatch name of
+                        Err _ ->
+                            Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value"))
 
-                L ((Sym "*") :: rest) ->
-                    Result.map Function.evalTimes (evalArgs rest) |> Result.Extra.join
-
-                L ((Sym "roundTo") :: rest) ->
-                    Result.map Function.roundTo (evalArgs rest) |> Result.Extra.join
+                        Ok f ->
+                            Result.map f (evalArgs rest) |> Result.Extra.join
 
                 L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                     applyLambda params body args |> evalResult

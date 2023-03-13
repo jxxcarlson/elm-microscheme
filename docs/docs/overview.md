@@ -66,25 +66,32 @@ evalResult resultExpr =
                 Z n ->
                     Ok (Z n)
 
-                F x ->
-                    Ok (F x)
+                F r ->
+                    Ok (F r)
 
                 Sym s ->
                     Ok (Sym s)
 
-                L ((Sym "+") :: rest) ->
-                    Result.map Function.evalPlus (evalArgs rest) |> Result.Extra.join
+                L ((Sym name) :: rest) ->
+                    case Function.dispatch name of
+                        Err _ ->
+                            Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value"))
 
-                -- More cases
-                
+                        Ok f ->
+                            Result.map f (evalArgs rest) |> Result.Extra.join
+
                 L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                     applyLambda params body args |> evalResult
 
                 _ ->
-                    Err <| EvalError 0 "Missing case (eval)"              
+                    Err <| EvalError 0 "Missing case (eval)"
 ```
 
-The function `evalArgs` evaluates the arguments to
+In the above code, `Function.dispatch` takes a function name as input
+and produces a value of type
+`Result EvalError (List Expr -> Result EvalError Expr)`
+as output.
+The function `evalArgs` evaluates the arguments of
 the function called:
 
 ```elm
