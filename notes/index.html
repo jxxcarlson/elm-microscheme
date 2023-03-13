@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Overview - Elm-MicroScheme</title>
+    <title>Notes - Elm-MicroScheme</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Overview";
-        var mkdocs_page_input_path = "overview.md";
+        var mkdocs_page_name = "Notes";
+        var mkdocs_page_input_path = "notes.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -44,24 +44,16 @@
                 <li class="toctree-l1"><a class="reference internal" href="../about/">Home</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Overview</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#expr-type">Expr Type</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#parser">Parser</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#eval">Eval</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#interpreter">Interpreter</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#frames-and-environments">Frames and Environments</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../notes/">Notes</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Notes</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#minimal-scheme">Minimal Scheme</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -82,7 +74,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Overview</li>
+      <li>Notes</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -91,71 +83,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="overview">Overview</h1>
-<h2 id="expr-type">Expr Type</h2>
-<p>The Expr type is define in module <code>Expr</code>:</p>
-<pre><code class="language-elm">type Expr
-    = Z Int
-    | F Float
-    | Str String
-    | Sym String
-    | L (List Expr)
-    | SF SpecialForm
+                <h1 id="notes">Notes</h1>
+<h2 id="minimal-scheme">Minimal Scheme</h2>
+<pre><code class="language-lisp">quote
+if
+lambda
+define
+set!
+begin
+cons
+car
+cdr
+null?
+</code></pre>
+<p>A somewhat longer list:</p>
+<pre><code class="language-lisp">lambda - Defines a new anonymous procedure.
 
+define - Defines a named procedure or value.
 
-type SpecialForm
-    = Define
-    | Lambda
-    | Display
-    | If
-</code></pre>
-<h2 id="parser">Parser</h2>
-<pre><code class="language-text">parse : Frame -&gt; String -&gt; Result (List P.DeadEnd) Expr
-parse table str =
-    P.run exprParser str |&gt; Result.map (Environment.applyFrame table)
-</code></pre>
-<p>The first argument of <code>parse</code> is the root frame, which
-is used to map certain values to symbols, e.g.,
-<code>Str "+"</code> to <code>Sym "+"</code>.  Thus we have</p>
-<pre><code class="language-elm">&gt; parse symbolTable &quot;(+ 1 2)&quot;
-Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
-</code></pre>
-<h2 id="eval">Eval</h2>
-<pre><code class="language-elm">eval : Expr -&gt; Result EvalError Expr
-</code></pre>
-<h2 id="interpreter">Interpreter</h2>
-<p>The interpreter is governed by the three functoions</p>
-<pre><code class="language-elm">init : State
-input : String -&gt; State -&gt; State
-step : State -&gt; State
-</code></pre>
-<p>where</p>
-<pre><code class="language-elm">type alias State =
-    { input : String
-    , output : String
-    , environment : Environment
-    , rootFrame : Frame
-    }
-</code></pre>
-<p>The root frame maps names to symbols for top level
-names such as <code>"+"</code> and <code>"*"</code> as in <code>"( 1 2 3)"</code>.
-At the moment we do not use the environment field.</p>
-<h2 id="frames-and-environments">Frames and Environments</h2>
-<p>A <em>frame</em> binds expressions to names:</p>
-<pre><code class="language-elm">type alias Frame =
-    Dict String Expr
-</code></pre>
-<p>An <em>environment</em> is a tree of frames with a distinguished
-(movable) node, i.e., a zipper:</p>
-<pre><code class="language-elm">type alias Environment =
-    Zipper Frame
+if - Conditional expression that evaluates one of two expressions based on a condition.
+
+let - Defines a new variable within a local scope.
+
+let* - Like let, but allows defining variables that depend on each other.
+
+letrec - Like let, but allows defining mutually recursive variables.
+
+set! - Assigns a new value to an existing variable.
+
+begin - Evaluates a sequence of expressions in order and returns the result of the last expression.
+
+quote - Returns a given expression without evaluating it.
+
+list - Constructs a list of its arguments.
+
+cons - Constructs a new pair.
+
+car - Returns the first element of a pair.
+
+cdr - Returns the second element of a pair.
+
+null? - Returns #t if the argument is the empty list.
+
+eq? - Returns #t if two arguments are the same object in memory.
+
+equal? - Returns #t if two arguments are structurally equivalent.
+
+map - Applies a given procedure to each element of a list and returns a new list of the results.
+
+fold (also known as reduce) - Applies a given procedure to a list, starting with an initial value, and accumulates the results.
+
+filter - Returns a new list containing only the elements of a given list that satisfy a given predicate.
+
+cond - A more flexible version of if that allows evaluating multiple expressions based on different conditions.
+
+and - Evaluates a sequence of expressions and returns #f if any of them evaluate to #f.
+
+or - Evaluates a sequence of expressions and returns #t if any of them evaluate to #t.
+
+not - Returns the logical negation of its argument.
+
+apply - Calls a procedure with a list of arguments
 </code></pre>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../about/" class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../notes/" class="btn btn-neutral float-right" title="Notes">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href=".." class="btn btn-neutral float-right" title="Mkdocs">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -178,10 +173,10 @@ At the moment we do not use the environment field.</p>
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../about/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../notes/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href=".." style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
