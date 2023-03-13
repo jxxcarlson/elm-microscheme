@@ -5,13 +5,16 @@ import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 
 
+symbolStrings =
+    [ "+", "*", "roundTo" ]
+
+
+symbols =
+    List.map (\s -> ( s, Sym s )) symbolStrings
+
+
 rootFrame : Frame
 rootFrame =
     { id = 0
-    , bindings =
-        Dict.fromList
-            [ ( "+", Sym "+" )
-            , ( "*", Sym "*" )
-            , ( "roundTo", Sym "roundTo" )
-            ]
+    , bindings = Dict.fromList symbols
     }
