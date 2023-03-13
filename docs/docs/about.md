@@ -12,7 +12,7 @@ add whatever features to it that you find interesting
 or useful.
 
 This project is open-source, with the code
-on [GitHub](https://github.com/jxxcarlson/elm-scheme).
+on [GitHub](https://github.com/jxxcarlson/elm-microscheme).
 
 ## Directions
 
