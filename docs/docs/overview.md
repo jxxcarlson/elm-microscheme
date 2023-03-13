@@ -192,7 +192,7 @@ type alias Environment =
 ## Numbers
 
 Module `Numbers` exports the type
-`NumberErrot` and the functions `coerce` and `roundTo`.
+`NumberError` and the functions `coerce` and `roundTo`.
 
 ```elm
 coerce : List Expr -> Result NumberError (Either (List Int) (List Float))
@@ -213,4 +213,36 @@ of type `Right (List Float)`.
 - In all other cases it return `Left NotAllNumbers`
 
 The function call `roundTo 2 x` returns the value 
-`x` rounded to two dedicmals.
+`x` rounded to two decicmals.
+
+
+**Examples**
+
+*No coercion:*
+
+```text
+> (+ 1 2)
+3
+
+> (+ 1.003 2)
+3.003
+
+> (+ 1.003 2.7)
+3.7030000000000003
+```
+
+In the last case, floating point arithmetic produces
+an incorrect result.  Better looking is the below
+
+```text
+> (roundTo 2 (+ 1.003 2.7))
+3.7
+```
+
+*Coercion:*
+
+```text
+> (+ 1.1 2)
+3.1
+```
+
