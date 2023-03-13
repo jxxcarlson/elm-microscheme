@@ -65,8 +65,8 @@ stringParser : P.Parser Expr
 stringParser =
     P.map Str
         (P.variable
-            { start = \c -> Char.isAlpha c || c == '+' || c == '*' || c == '='
-            , inner = \c -> Char.isAlphaNum c || c == '_'
+            { start = \c -> not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
+            , inner = \c -> c /= ' '
             , reserved = Set.fromList [ "eval", "define", "display" ]
             }
         )
