@@ -1,8 +1,9 @@
 module MicroScheme.Eval exposing (display, eval)
 
-import Maybe.Extra
+import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..), SpecialForm(..))
 import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Function as Function
 import Result.Extra
 
 
@@ -21,11 +22,6 @@ import Result.Extra
 eval : Expr -> Result EvalError Expr
 eval expr =
     evalResult (Ok expr)
-
-
-type EvalError
-    = EvalError Int String
-    | FR Frame.FrameError
 
 
 evalResult : Result EvalError Expr -> Result EvalError Expr
@@ -51,7 +47,7 @@ evalResult resultExpr =
                         args =
                             List.map (evalResult << Ok) rest |> Result.Extra.combine
                     in
-                    Result.map evalPlus args |> Result.Extra.join
+                    Result.map Function.evalPlus args |> Result.Extra.join
 
                 L ((Sym "*") :: rest) ->
                     let
@@ -59,7 +55,15 @@ evalResult resultExpr =
                         args =
                             List.map (evalResult << Ok) rest |> Result.Extra.combine
                     in
-                    Result.map evalTimes args |> Result.Extra.join
+                    Result.map Function.evalTimes args |> Result.Extra.join
+
+                L ((Sym "roundTo") :: rest) ->
+                    let
+                        args : Result EvalError (List Expr)
+                        args =
+                            List.map (evalResult << Ok) rest |> Result.Extra.combine
+                    in
+                    Result.map Function.roundTo args |> Result.Extra.join
 
                 L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                     applyLambda params body args |> evalResult
@@ -83,36 +87,6 @@ applyLambda params body args =
 
         Ok frame ->
             Ok (List.map (Frame.resolve frame) body |> L)
-
-
-evalPlus : List Expr -> Result EvalError Expr
-evalPlus rest_ =
-    case List.map unwrapInteger rest_ |> Maybe.Extra.combine of
-        Nothing ->
-            Err <| EvalError 1 "Could not unwrap argument to evalPlus"
-
-        Just ints ->
-            Ok <| Z (List.sum ints)
-
-
-evalTimes : List Expr -> Result EvalError Expr
-evalTimes rest_ =
-    case List.map unwrapInteger rest_ |> Maybe.Extra.combine of
-        Nothing ->
-            Err <| EvalError 1 "Could not unwrap argument to evalTimes"
-
-        Just ints ->
-            Ok <| Z (List.product ints)
-
-
-unwrapInteger : Expr -> Maybe Int
-unwrapInteger expr =
-    case expr of
-        Z n ->
-            Just n
-
-        _ ->
-            Nothing
 
 
 display : Expr -> String

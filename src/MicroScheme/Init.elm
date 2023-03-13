@@ -12,5 +12,6 @@ rootFrame =
         Dict.fromList
             [ ( "+", Sym "+" )
             , ( "*", Sym "*" )
+            , ( "roundTo", Sym "roundTo" )
             ]
     }

@@ -6,6 +6,7 @@
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
+            "Chadtech/elm-bool-extra": "2.4.2",
             "Janiczek/cmd-extra": "1.1.0",
             "albertdahlin/elm-posix": "1.1.0",
             "elm/browser": "1.0.2",
@@ -16,6 +17,7 @@
             "elm-community/list-extra": "8.7.0",
             "elm-community/maybe-extra": "5.3.0",
             "elm-community/result-extra": "2.4.0",
+            "toastal/either": "3.6.3",
             "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
