@@ -96,20 +96,19 @@
                 <h1 id="overview">Overview</h1>
 <h2 id="expr-type">Expr Type</h2>
 <p>The Expr type is define in module <code>Expr</code>:</p>
-<pre><code class="language-elm">type Expr
+<pre><code class="language-elm">
+type Expr
     = Z Int
     | F Float
+    | B Bool
     | Str String
     | Sym String
     | L (List Expr)
-    | SF SpecialForm
+    | Pair Expr Expr
+    | Lambda Expr Expr
+    | Define Expr Expr
+    | If Expr Expr Expr
 
-
-type SpecialForm
-    = Define
-    | Lambda
-    | Display
-    | If
 </code></pre>
 <h2 id="parser">Parser</h2>
 <pre><code class="language-text">parse : Frame -&gt; String -&gt; Result (List P.DeadEnd) Expr
@@ -128,12 +127,14 @@ Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
 </code></pre>
 <h2 id="eval">Eval</h2>
 <p>The module <code>Eval</code> exports just one function,</p>
-<pre><code class="language-elm">eval : Expr -&gt; Result EvalError Expr
+<pre><code class="language-elm">eval : Environment -&gt; Expr -&gt; Result EvalError Expr
+eval env expr =
+    evalResult env (Ok expr)
 </code></pre>
 <p>It calls <code>evalResult</code>, which is a long exercise
 in pattern-matching:</p>
-<pre><code class="language-elm">evalResult : Result EvalError Expr -&gt; Result EvalError Expr
-evalResult resultExpr =
+<pre><code class="language-elm">evalResult : Environment -&gt; Result EvalError Expr -&gt; Result EvalError Expr
+evalResult env resultExpr =
     case resultExpr of
         Err error -&gt;
             Err error
@@ -143,44 +144,52 @@ evalResult resultExpr =
                 Z n -&gt;
                     Ok (Z n)
 
-                F r -&gt;
-                    Ok (F r)
+                F x -&gt;
+                    Ok (F x)
 
                 Sym s -&gt;
                     Ok (Sym s)
 
-                L ((Sym name) :: rest) -&gt;
-                    case Function.dispatch name of
-                        Err _ -&gt;
-                            Err (EvalError 3 (&quot;dispatch &quot; ++ name ++ &quot; did not return a value&quot;))
+                L ((Sym functionName) :: args) -&gt;
+                    dispatchFunction env functionName args
 
-                        Ok f -&gt;
-                            Result.map f (evalArgs rest) |&gt; Result.Extra.join
+                L ((Lambda (L params) (L body)) :: args) -&gt;
+                    evalResult env (applyLambdaToExpressionList params body args)
 
-                L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) -&gt;
-                    applyLambda params body args |&gt; evalResult
+                L ((Lambda (L params) body) :: args) -&gt;
+                    evalResult env (applyLambdaToExpression params body args)
+
+                If (L boolExpr_) expr1 expr2 -&gt;
+                    evalBoolExpr env boolExpr_ expr1 expr2
+
+                L ((Str name) :: rest) -&gt;
+                    Err &lt;| EvalError 0 (&quot;Unknown symbol: &quot; ++ name)
+
+                L exprList_ -&gt;
+                    Err &lt;| EvalError -1 &lt;| &quot;!!! &quot;
 
                 _ -&gt;
-                    Err &lt;| EvalError 0 &quot;Missing case (eval)&quot;
+                    Err &lt;| EvalError 0 &lt;| &quot;Missing case (eval), expr = XXX&quot;
 </code></pre>
-<p>In the above code, <code>Function.dispatch</code> takes a function name as input
-and produces a value of type
-<code>Result EvalError (List Expr -&gt; Result EvalError Expr)</code>
-as output.
-The function <code>evalArgs</code> evaluates the arguments of
-the function called:</p>
-<pre><code class="language-elm">evalArgs : List Expr -&gt; Result EvalError (List Expr)
-evalArgs args =
-    List.map (evalResult &lt;&lt; Ok) args |&gt; Result.Extra.combine
-</code></pre>
-<p>The function <code>applyLambda</code>  creates a temporary frame with
+<p>Function <code>evalResult</code> matches the various patterns presented by
+<code>expr</code>, mapping them to handlers which return a value of 
+type <code>Result EvalError Expr</code>.  An example, the pattern
+<code>L ((Sym functionName) :: args)</code> is handle by the function call
+<code>dispatchFunction env functionName args</code>, which operates by 
+evaluating <code>arg</code> using the environment <code>env</code>, then applying
+the function of type <code>List Expr -&gt; Result EvalError Expr</code> that it finds for the key <code>functionName</code>
+in a suitable dictionary.</p>
+<p>One more example: the function <code>applyLambdaToExpressionList</code>  creates a temporary frame with
 bindings for the variable names and arguments of the 
 lambda expression, then uses that frame to
 resolve the names which appear in the function
-body.</p>
-<pre><code class="language-elm">applyLambda : List Expr -&gt; List Expr -&gt; List Expr -&gt; Result EvalError Expr
-applyLambda params body args =
+body.  The result of this operation is then evaluated in the 
+current environment by <code>evalResult</code>.</p>
+<pre><code class="language-elm">applyLambdaToExpressionList : List Expr -&gt; List Expr -&gt; List Expr -&gt; Result EvalError Expr
+applyLambdaToExpressionList params body args =
     let
+        -- `A throw-away frame. It will never be used
+        -- outside of this function.
         frameResult : Result Frame.FrameError Frame.Frame
         frameResult =
             Frame.addBindings (Frame.varNames params) args Frame.empty
@@ -190,7 +199,7 @@ applyLambda params body args =
             Err frameError |&gt; Result.mapError (\err -&gt; FR err)
 
         Ok frame -&gt;
-            Ok (List.map (Frame.resolve frame) body |&gt; L)
+            Ok (List.map (Frame.resolve frame) body |&gt; L)        Ok (List.map (Frame.resolve frame) body |&gt; L)
 </code></pre>
 <p>The <code>Function</code> module exports built-in functions for
 use by <code>eval</code>, e.g., <code>Function.plus</code> and <code>Function.times</code>.
