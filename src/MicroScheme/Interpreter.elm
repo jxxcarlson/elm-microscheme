@@ -1,5 +1,6 @@
 module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 
+import Maybe.Extra
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
 import MicroScheme.Expr exposing (Expr(..))
@@ -81,13 +82,11 @@ runProgram separator inputString =
 step : State -> State
 step state =
     let
-        _ =
-            Debug.log "ENV" state.environment
-
         parsed =
-            Parser.parse (Environment.root state.environment) state.input |> Debug.log "PARSED"
+            Parser.parse (Environment.root state.environment) state.input
+                |> Result.map (Frame.resolve [] (Environment.root state.environment))
     in
-    case Parser.parse (Environment.root state.environment) state.input of
+    case parsed of
         Err err ->
             { state
                 | output = "Parse error"
@@ -103,8 +102,20 @@ step state =
 
                 Define (L ((Str name) :: args)) (L body) ->
                     let
+                        argStrings =
+                            let
+                                mapper expr_ =
+                                    case expr_ of
+                                        Str s ->
+                                            Just s
+
+                                        _ ->
+                                            Nothing
+                            in
+                            List.map mapper args |> Maybe.Extra.values
+
                         newBody =
-                            List.map (Frame.resolve (Environment.root state.environment)) body
+                            List.map (Frame.resolve argStrings (Environment.root state.environment)) body
 
                         value =
                             Lambda (L args) (L newBody)

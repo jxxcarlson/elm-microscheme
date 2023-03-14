@@ -84,8 +84,8 @@ addSymbol str expr frame =
     { frame | bindings = Dict.insert str expr frame.bindings }
 
 
-resolve : Frame -> Expr -> Expr
-resolve frame expr =
+resolve : List String -> Frame -> Expr -> Expr
+resolve exceptions frame expr =
     case expr of
         Str s ->
             case Dict.get s frame.bindings of
@@ -93,10 +93,14 @@ resolve frame expr =
                     expr
 
                 Just expr2 ->
-                    expr2
+                    if List.member s exceptions then
+                        expr
+
+                    else
+                        expr2
 
         L list ->
-            L (List.map (resolve frame) list)
+            L (List.map (resolve exceptions frame) list)
 
         _ ->
             expr

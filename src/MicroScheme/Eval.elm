@@ -40,7 +40,7 @@ evalResult env resultExpr =
                     Ok (F r)
 
                 Str s ->
-                    Ok (Frame.resolve (Environment.root env) expr)
+                    Ok (Frame.resolve [] (Environment.root env) expr)
 
                 Sym s ->
                     Ok (Sym s)
@@ -84,7 +84,7 @@ dispatchFunction env functionName args =
 evalBoolExpr env boolExpr_ expr1 expr2 =
     let
         boolExpr =
-            List.map (Environment.resolve env) boolExpr_
+            List.map (Environment.resolve [] env) boolExpr_
     in
     case eval env (L boolExpr) of
         Err _ ->
@@ -131,7 +131,7 @@ applyLambdaToExpression params body args =
             Err frameError |> Result.mapError (\err -> FR err)
 
         Ok frame ->
-            Ok (Frame.resolve frame body)
+            Ok (Frame.resolve [] frame body)
 
 
 applyLambdaToExpressionList : List Expr -> List Expr -> List Expr -> Result EvalError Expr
@@ -148,4 +148,4 @@ applyLambdaToExpressionList params body args =
             Err frameError |> Result.mapError (\err -> FR err)
 
         Ok frame ->
-            Ok (List.map (Frame.resolve frame) body |> L)
+            Ok (List.map (Frame.resolve [] frame) body |> L)

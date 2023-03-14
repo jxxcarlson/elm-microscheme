@@ -20,10 +20,10 @@ type alias Environment =
     Zipper Frame
 
 
-resolve : Environment -> Expr -> Expr
-resolve env expr =
+resolve : List String -> Environment -> Expr -> Expr
+resolve exceptions env expr =
     -- TODO: search tree
-    Frame.resolve (root env) expr
+    Frame.resolve exceptions (root env) expr
 
 
 initial =

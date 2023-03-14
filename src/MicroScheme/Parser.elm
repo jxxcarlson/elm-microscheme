@@ -24,7 +24,11 @@ import Set
 -}
 parse : Frame -> String -> Result (List P.DeadEnd) Expr
 parse frame str =
-    P.run exprParser str |> Result.map (Frame.resolve frame)
+    P.run exprParser str
+
+
+
+--
 
 
 pairParser : P.Parser Expr
