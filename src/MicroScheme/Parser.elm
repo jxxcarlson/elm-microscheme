@@ -1,6 +1,4 @@
-module MicroScheme.Parser exposing (..)
-
--- (exprParser, parse)
+module MicroScheme.Parser exposing (parse)
 
 import MicroScheme.Expr as Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
