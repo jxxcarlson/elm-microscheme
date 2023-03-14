@@ -79,6 +79,10 @@ runProgram separator inputString =
 -}
 step : State -> State
 step state =
+    let
+        parsed =
+            Parser.parse (Environment.root state.environment) state.input |> Debug.log "PARSED"
+    in
     case Parser.parse (Environment.root state.environment) state.input of
         Err err ->
             { state
