@@ -42,18 +42,8 @@ evalResult env resultExpr =
                 Sym s ->
                     Ok (Sym s)
 
-                L ((Sym name) :: rest) ->
-                    case Function.dispatch name of
-                        Err _ ->
-                            Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value"))
-
-                        Ok f ->
-                            case evalArgs env rest of
-                                Err _ ->
-                                    Err (EvalError 5 name)
-
-                                Ok actualArgs ->
-                                    f actualArgs
+                L ((Sym functionName) :: args) ->
+                    dispatchFunction env functionName args
 
                 L ((Lambda (L params) (L body)) :: args) ->
                     evalResult env (applyLambdaToExpressionList params body args)
@@ -62,34 +52,7 @@ evalResult env resultExpr =
                     evalResult env (applyLambdaToExpression params body args)
 
                 If (L boolExpr_) expr1 expr2 ->
-                    let
-                        boolExpr =
-                            List.map (Environment.resolve env) boolExpr_
-                    in
-                    case eval env (L boolExpr) of
-                        Err _ ->
-                            Err (EvalError 4 "Error evaluating predicate:")
-
-                        Ok truthValue ->
-                            case truthValue of
-                                B True ->
-                                    case eval env expr1 of
-                                        Err _ ->
-                                            Err (EvalError 4 "True, error evaluating: XXX")
-
-                                        Ok value ->
-                                            Ok value
-
-                                B False ->
-                                    case eval env expr2 of
-                                        Err _ ->
-                                            Err (EvalError 4 "False, error evaluating: XXX")
-
-                                        Ok value ->
-                                            Ok value
-
-                                _ ->
-                                    Err (EvalError 4 "False, error evaluating predicate")
+                    evalBoolExpr env boolExpr_ expr1 expr2
 
                 L ((Str name) :: rest) ->
                     Err <| EvalError 0 ("Unknown symbol: " ++ name)
@@ -99,6 +62,51 @@ evalResult env resultExpr =
 
                 _ ->
                     Err <| EvalError 0 <| "Missing case (eval), expr = XXX"
+
+
+dispatchFunction env functionName args =
+    case Function.dispatch functionName of
+        Err _ ->
+            Err (EvalError 3 ("dispatch " ++ functionName ++ " did not return a value"))
+
+        Ok f ->
+            case evalArgs env args of
+                Err _ ->
+                    Err (EvalError 5 functionName)
+
+                Ok actualArgs ->
+                    f actualArgs
+
+
+evalBoolExpr env boolExpr_ expr1 expr2 =
+    let
+        boolExpr =
+            List.map (Environment.resolve env) boolExpr_
+    in
+    case eval env (L boolExpr) of
+        Err _ ->
+            Err (EvalError 4 "Error evaluating predicate:")
+
+        Ok truthValue ->
+            case truthValue of
+                B True ->
+                    case eval env expr1 of
+                        Err _ ->
+                            Err (EvalError 4 "True, error evaluating: XXX")
+
+                        Ok value ->
+                            Ok value
+
+                B False ->
+                    case eval env expr2 of
+                        Err _ ->
+                            Err (EvalError 4 "False, error evaluating: XXX")
+
+                        Ok value ->
+                            Ok value
+
+                _ ->
+                    Err (EvalError 4 "False, error evaluating predicate")
 
 
 evalArgs : Environment -> List Expr -> Result EvalError (List Expr)

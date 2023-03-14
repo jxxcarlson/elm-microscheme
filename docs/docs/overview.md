@@ -5,20 +5,19 @@
 The Expr type is define in module `Expr`:
 
 ```elm
+
 type Expr
     = Z Int
     | F Float
+    | B Bool
     | Str String
     | Sym String
     | L (List Expr)
-    | SF SpecialForm
+    | Pair Expr Expr
+    | Lambda Expr Expr
+    | Define Expr Expr
+    | If Expr Expr Expr
 
-
-type SpecialForm
-    = Define
-    | Lambda
-    | Display
-    | If
 ```
 
 ## Parser
@@ -48,15 +47,17 @@ Ok (L [Sym "+",Z 1,Z 2])
 The module `Eval` exports just one function,
 
 ```elm
-eval : Expr -> Result EvalError Expr
+eval : Environment -> Expr -> Result EvalError Expr
+eval env expr =
+    evalResult env (Ok expr)
 ```
 
 It calls `evalResult`, which is a long exercise
 in pattern-matching:
 
 ```elm
-evalResult : Result EvalError Expr -> Result EvalError Expr
-evalResult resultExpr =
+evalResult : Environment -> Result EvalError Expr -> Result EvalError Expr
+evalResult env resultExpr =
     case resultExpr of
         Err error ->
             Err error
@@ -66,50 +67,57 @@ evalResult resultExpr =
                 Z n ->
                     Ok (Z n)
 
-                F r ->
-                    Ok (F r)
+                F x ->
+                    Ok (F x)
 
                 Sym s ->
                     Ok (Sym s)
 
-                L ((Sym name) :: rest) ->
-                    case Function.dispatch name of
-                        Err _ ->
-                            Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value"))
+                L ((Sym functionName) :: args) ->
+                    dispatchFunction env functionName args
 
-                        Ok f ->
-                            Result.map f (evalArgs rest) |> Result.Extra.join
+                L ((Lambda (L params) (L body)) :: args) ->
+                    evalResult env (applyLambdaToExpressionList params body args)
 
-                L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
-                    applyLambda params body args |> evalResult
+                L ((Lambda (L params) body) :: args) ->
+                    evalResult env (applyLambdaToExpression params body args)
+
+                If (L boolExpr_) expr1 expr2 ->
+                    evalBoolExpr env boolExpr_ expr1 expr2
+
+                L ((Str name) :: rest) ->
+                    Err <| EvalError 0 ("Unknown symbol: " ++ name)
+
+                L exprList_ ->
+                    Err <| EvalError -1 <| "!!! "
 
                 _ ->
-                    Err <| EvalError 0 "Missing case (eval)"
+                    Err <| EvalError 0 <| "Missing case (eval), expr = XXX"
 ```
 
-In the above code, `Function.dispatch` takes a function name as input
-and produces a value of type
-`Result EvalError (List Expr -> Result EvalError Expr)`
-as output.
-The function `evalArgs` evaluates the arguments of
-the function called:
 
-```elm
-evalArgs : List Expr -> Result EvalError (List Expr)
-evalArgs args =
-    List.map (evalResult << Ok) args |> Result.Extra.combine
-```
+Function `evalResult` matches the various patterns presented by
+`expr`, mapping them to handlers which return a value of 
+type `Result EvalError Expr`.  An example, the pattern
+`L ((Sym functionName) :: args)` is handle by the function call
+`dispatchFunction env functionName args`, which operates by 
+evaluating `arg` using the environment `env`, then applying
+the function of type `List Expr -> Result EvalError Expr` that it finds for the key `functionName`
+in a suitable dictionary.
 
-The function `applyLambda`  creates a temporary frame with
+One more example: the function `applyLambdaToExpressionList`  creates a temporary frame with
 bindings for the variable names and arguments of the 
 lambda expression, then uses that frame to
 resolve the names which appear in the function
-body.
+body.  The result of this operation is then evaluated in the 
+current environment by `evalResult`.
 
 ```elm
-applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
-applyLambda params body args =
+applyLambdaToExpressionList : List Expr -> List Expr -> List Expr -> Result EvalError Expr
+applyLambdaToExpressionList params body args =
     let
+        -- `A throw-away frame. It will never be used
+        -- outside of this function.
         frameResult : Result Frame.FrameError Frame.Frame
         frameResult =
             Frame.addBindings (Frame.varNames params) args Frame.empty
@@ -119,7 +127,7 @@ applyLambda params body args =
             Err frameError |> Result.mapError (\err -> FR err)
 
         Ok frame ->
-            Ok (List.map (Frame.resolve frame) body |> L)
+            Ok (List.map (Frame.resolve frame) body |> L)        Ok (List.map (Frame.resolve frame) body |> L)
 ```
 The `Function` module exports built-in functions for
 use by `eval`, e.g., `Function.plus` and `Function.times`.
