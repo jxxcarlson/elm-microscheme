@@ -94,13 +94,26 @@ step state =
                     let
                         newBody =
                             List.map (Frame.resolve (Environment.root state.environment)) body
+
+                        value =
+                            Lambda (L args) (L newBody)
                     in
-                    { state | environment = Environment.addSymbolToRoot name (Lambda (L args) (L newBody)) state.environment, output = name }
+                    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+
+                Define (L ((Str name) :: args)) body ->
+                    let
+                        newBody =
+                            Frame.resolve (Environment.root state.environment) body
+
+                        value =
+                            Lambda (L args) newBody
+                    in
+                    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
 
                 _ ->
                     case Eval.eval state.environment expr of
                         Err error ->
-                            { state | output = "error (!)" }
+                            { state | output = "error: " ++ Debug.toString error }
 
                         Ok value ->
                             { state | output = display value }

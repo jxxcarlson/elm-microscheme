@@ -56,7 +56,10 @@ evalResult env resultExpr =
                                     f actualArgs
 
                 L ((Lambda (L params) (L body)) :: args) ->
-                    evalResult env (applyLambda params body args)
+                    evalResult env (applyLambdaToExpressionList params body args)
+
+                L ((Lambda (L params) body) :: args) ->
+                    evalResult env (applyLambdaToExpression params body args)
 
                 If (L boolExpr_) expr1 expr2 ->
                     let
@@ -72,7 +75,7 @@ evalResult env resultExpr =
                                 B True ->
                                     case eval env expr1 of
                                         Err _ ->
-                                            Err (EvalError 4 "True, error evaluating predicate")
+                                            Err (EvalError 4 "True, error evaluating: XXX")
 
                                         Ok value ->
                                             Ok value
@@ -80,7 +83,7 @@ evalResult env resultExpr =
                                 B False ->
                                     case eval env expr2 of
                                         Err _ ->
-                                            Err (EvalError 4 "False, error evaluating predicate")
+                                            Err (EvalError 4 "False, error evaluating: XXX")
 
                                         Ok value ->
                                             Ok value
@@ -91,8 +94,11 @@ evalResult env resultExpr =
                 L ((Str name) :: rest) ->
                     Err <| EvalError 0 ("Unknown symbol: " ++ name)
 
+                L exprList_ ->
+                    Err <| EvalError -1 <| "!!! "
+
                 _ ->
-                    Err <| EvalError 0 <| "Missing case (eval)"
+                    Err <| EvalError 0 <| "Missing case (eval), expr = XXX"
 
 
 evalArgs : Environment -> List Expr -> Result EvalError (List Expr)
@@ -100,8 +106,25 @@ evalArgs env args =
     List.map (\arg -> evalResult env (Ok arg)) args |> Result.Extra.combine
 
 
-applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
-applyLambda params body args =
+applyLambdaToExpression : List Expr -> Expr -> List Expr -> Result EvalError Expr
+applyLambdaToExpression params body args =
+    let
+        -- `A throw-away frame. It will never be used
+        -- outside of this function.
+        frameResult : Result Frame.FrameError Frame.Frame
+        frameResult =
+            Frame.addBindings (Frame.varNames params) args Frame.empty
+    in
+    case frameResult of
+        Err frameError ->
+            Err frameError |> Result.mapError (\err -> FR err)
+
+        Ok frame ->
+            Ok (Frame.resolve frame body)
+
+
+applyLambdaToExpressionList : List Expr -> List Expr -> List Expr -> Result EvalError Expr
+applyLambdaToExpressionList params body args =
     let
         -- `A throw-away frame. It will never be used
         -- outside of this function.
