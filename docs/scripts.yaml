@@ -5,3 +5,5 @@ scripts:
     - git ci -m "update docs" docs/* scripts.yaml
     - git push
     - mkdocs gh-deploy
+
+  deploy: mkdocs gh-deploy
