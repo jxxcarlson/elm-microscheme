@@ -173,7 +173,7 @@ evalResult env resultExpr =
 </code></pre>
 <p>Function <code>evalResult</code> matches the various patterns presented by
 <code>expr</code>, mapping them to handlers which act on various subexpressions, returning a value of 
-type <code>Result EvalError Expr</code>.  An example, the pattern
+type <code>Result EvalError Expr</code>.  As an example, the pattern
 <code>L ((Sym functionName) :: args)</code> is handle by the function call
 <code>dispatchFunction env functionName args</code>, which operates by 
 evaluating <code>arg</code> using the environment <code>env</code>, then applying
