@@ -2,7 +2,8 @@
 
 ## Expr Type
 
-The Expr type is define in module `Expr`:
+Expressions in MicroScheme are represented by the type
+`Expr`:
 
 ```elm
 
