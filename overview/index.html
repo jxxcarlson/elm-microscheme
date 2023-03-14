@@ -112,20 +112,23 @@ type Expr
 
 </code></pre>
 <h2 id="parser">Parser</h2>
+<p>Here is an example of how to run the parser:</p>
+<pre><code class="language-elm">$ elm repl
+
+&gt; import MicroScheme.Parser exposing(parse)
+&gt; import MicroScheme.Init exposing(rootFrame)
+
+&gt; parse rootFrame &quot;(+ 1 2)&quot;
+Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
+</code></pre>
+<p>The module <code>Parser</code> has <code>parse</code> as its single export:</p>
 <pre><code class="language-text">parse : Frame -&gt; String -&gt; Result (List P.DeadEnd) Expr
 parse table str =
     P.run exprParser str |&gt; Result.map (Environment.applyFrame table)
 </code></pre>
 <p>The first argument of <code>parse</code> is the root frame, which
-is used to map certain values to symbols, e.g.,
-<code>Str "+"</code> to <code>Sym "+"</code>.  Thus we have</p>
-<pre><code class="language-elm">&gt; import MicroScheme.Parser exposing(parse)
-&gt; import MicroScheme.Init exposing(rootFrame)
-
-&gt; parse rootFrame &quot;(+ 1 2)&quot;
-Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
-
-</code></pre>
+is used to map string values to symbols, e.g.,
+<code>Str "+"</code> to <code>Sym "+"</code> as in the example above.</p>
 <h2 id="eval">Eval</h2>
 <p>The module <code>Eval</code> exports just one function,</p>
 <pre><code class="language-elm">eval : Environment -&gt; Expr -&gt; Result EvalError Expr
