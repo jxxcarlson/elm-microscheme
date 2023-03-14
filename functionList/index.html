@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Notes - Elm-MicroScheme</title>
+    <title>Function List - Elm-MicroScheme</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Notes";
-        var mkdocs_page_input_path = "notes.md";
+        var mkdocs_page_name = "Function List";
+        var mkdocs_page_input_path = "functionList.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -48,12 +48,8 @@
                 <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Notes</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#minimal-scheme">Minimal Scheme</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../notes/">Notes</a>
                 </li>
               </ul>
               <ul>
@@ -78,7 +74,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Notes</li>
+      <li>Function List</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -87,75 +83,84 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="notes">Notes</h1>
-<h2 id="minimal-scheme">Minimal Scheme</h2>
-<pre><code class="language-lisp">quote
-if
-lambda
-define
-set!
-begin
-cons
-car
-cdr
-null?
+                <h1 id="function-list">Function List</h1>
+<h2 id="scheme">Scheme</h2>
+<h3 id="define">Define</h3>
+<pre><code>&gt; (define x 3)
+x
+
+&gt; x
+3
+
+&gt; (define (square x) (* x x))
+square
+
+&gt; (square 4)
+16
 </code></pre>
-<p>A somewhat longer list:</p>
-<pre><code class="language-lisp">lambda - Defines a new anonymous procedure.
-
-define - Defines a named procedure or value.
-
-if - Conditional expression that evaluates one of two expressions based on a condition.
-
-let - Defines a new variable within a local scope.
-
-let* - Like let, but allows defining variables that depend on each other.
-
-letrec - Like let, but allows defining mutually recursive variables.
-
-set! - Assigns a new value to an existing variable.
-
-begin - Evaluates a sequence of expressions in order and returns the result of the last expression.
-
-quote - Returns a given expression without evaluating it.
-
-list - Constructs a list of its arguments.
-
-cons - Constructs a new pair.
-
-car - Returns the first element of a pair.
-
-cdr - Returns the second element of a pair.
-
-null? - Returns #t if the argument is the empty list.
-
-eq? - Returns #t if two arguments are the same object in memory.
-
-equal? - Returns #t if two arguments are structurally equivalent.
-
-map - Applies a given procedure to each element of a list and returns a new list of the results.
-
-fold (also known as reduce) - Applies a given procedure to a list, starting with an initial value, and accumulates the results.
-
-filter - Returns a new list containing only the elements of a given list that satisfy a given predicate.
-
-cond - A more flexible version of if that allows evaluating multiple expressions based on different conditions.
-
-and - Evaluates a sequence of expressions and returns #f if any of them evaluate to #f.
-
-or - Evaluates a sequence of expressions and returns #t if any of them evaluate to #t.
-
-not - Returns the logical negation of its argument.
-
-apply - Calls a procedure with a list of arguments
+<p>Notice that you can look up values in the environment:</p>
+<pre><code>&gt; (lookup square)
+[Lambda (L [Str &quot;x&quot;]) (L [Sym &quot;*&quot;,Str &quot;x&quot;,Str &quot;x&quot;])]
 </code></pre>
+<p>Something slightly more complex:</p>
+<pre><code>&gt; (define (isEven n) (= (remainder n 2) 0))
+isEven
+
+&gt; (isEven 17)
+False
+</code></pre>
+<h3 id="if">If</h3>
+<pre><code class="language-text">&gt; (if (&lt; 0 1) A B)
+A
+</code></pre>
+<h2 id="function-dictionary">Function Dictionary</h2>
+<pre><code class="language-elm">functionDict : Dict String (List Expr -&gt; Result EvalError Expr)
+functionDict =
+    Dict.fromList
+        [ ( &quot;+&quot;, evalPlus )
+        , ( &quot;*&quot;, evalTimes )
+        , ( &quot;roundTo&quot;, roundTo )
+        , ( &quot;=&quot;, equalNumbers )
+        , ( &quot;&lt;&quot;, ltPredicate )
+        , ( &quot;&gt;&quot;, gtPredicate )
+        , ( &quot;&lt;=&quot;, ltePredicate )
+        , ( &quot;&gt;=&quot;, gtePredicate )
+        , ( &quot;remainder&quot;, remainder )
+        ]
+</code></pre>
+<h2 id="arithmetic">Arithmetic</h2>
+<ul>
+<li>
+<p><code>(+ 1 2 3 4) =&gt; 10</code></p>
+</li>
+<li>
+<p><code>(* 1 2 3 4) =&gt; 24</code></p>
+</li>
+<li>
+<p><code>(roundTo 2 3.1416) =&gt; 3.14</code></p>
+</li>
+<li>
+<p><code>(= 2 3) =&gt; False</code></p>
+</li>
+<li>
+<p><code>(&lt; 2 3) =&gt; True</code></p>
+</li>
+<li>
+<p><code>(&lt;= 2 3) =&gt; True</code></p>
+</li>
+<li>
+<p><code>(&gt; 2 3) =&gt; False</code></p>
+</li>
+<li>
+<p><code>(&gt;=2 3) =&gt; False</code></p>
+</li>
+<li>
+<p><code>(remainder 15 2) =&gt; 1</code></p>
+</li>
+</ul>
               
             </div>
           </div><footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href=".." class="btn btn-neutral float-right" title="Mkdocs">Next <span class="icon icon-circle-arrow-right"></span></a>
-    </div>
 
   <hr/>
 
@@ -177,10 +182,6 @@ apply - Calls a procedure with a list of arguments
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
-    
-    
-      <span><a href=".." style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
