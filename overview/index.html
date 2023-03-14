@@ -150,6 +150,9 @@ evalResult env resultExpr =
                 Sym s -&gt;
                     Ok (Sym s)
 
+                Str s -&gt;
+                    Ok (Str s)                   
+
                 L ((Sym functionName) :: args) -&gt;
                     dispatchFunction env functionName args
 
@@ -172,14 +175,16 @@ evalResult env resultExpr =
                     Err &lt;| EvalError 0 &lt;| &quot;Missing case (eval), expr = XXX&quot;
 </code></pre>
 <p>Function <code>evalResult</code> matches the various patterns presented by
-<code>expr</code>, mapping them to handlers which act on various subexpressions, returning a value of 
+<code>expr</code>, mapping them to handlers which act on the subexpressions
+or the pattern, returning a value of 
 type <code>Result EvalError Expr</code>.  As an example, the pattern
-<code>L ((Sym functionName) :: args)</code> is handle by the function call
+<code>L ((Sym functionName) :: args)</code> is handlde by the function call
 <code>dispatchFunction env functionName args</code>, which operates by 
-evaluating <code>arg</code> using the environment <code>env</code>, then applying
-the function of type <code>List Expr -&gt; Result EvalError Expr</code> that it finds for the key <code>functionName</code>
+evaluating <code>args</code> using the environment <code>env</code>, then applying
+the function of type <code>List Expr -&gt; Result EvalError Expr</code>. 
+This function is gotten by looking up the key <code>functionName</code>
 in a suitable dictionary.</p>
-<p>One more example: the function <code>applyLambdaToExpressionList</code>  creates a temporary frame with
+<p>One more example. The function <code>applyLambdaToExpressionList</code>  creates a temporary frame with
 bindings for the variable names and arguments of the 
 lambda expression, then uses that frame to
 resolve the names which appear in the function
