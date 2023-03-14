@@ -105,11 +105,8 @@ step state =
 
                 Define (L ((Str name) :: args)) body ->
                     let
-                        newBody =
-                            Frame.resolve (Environment.root state.environment) body
-
                         value =
-                            Lambda (L args) newBody
+                            Lambda (L args) body
                     in
                     { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
 
