@@ -40,7 +40,7 @@ evalResult env resultExpr =
                     Ok (F r)
 
                 Str s ->
-                    Ok (Str s)
+                    Ok (Frame.resolve (Environment.root env) expr)
 
                 Sym s ->
                     Ok (Sym s)
