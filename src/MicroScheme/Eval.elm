@@ -39,6 +39,9 @@ evalResult env resultExpr =
                 F r ->
                     Ok (F r)
 
+                Str s ->
+                    Ok (Str s)
+
                 Sym s ->
                     Ok (Sym s)
 

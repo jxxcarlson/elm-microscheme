@@ -113,7 +113,7 @@ step state =
                 _ ->
                     case Eval.eval state.environment expr of
                         Err error ->
-                            { state | output = "error: XXX" }
+                            { state | output = "error (17): " ++ Debug.toString error ++ " , expr (" ++ Debug.toString expr ++ ")" }
 
                         Ok value ->
                             { state | output = display value }

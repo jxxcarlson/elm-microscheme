@@ -46,5 +46,6 @@ evalSuite =
         , progTest "(define (square x) (* x x)); (square (square 6))" "1296"
         , progTest "(< 0 1)" "True"
         , progTest "(< 1 0)" "False"
-        , progTest "(if (< 0 1) \"Ok\" \"Untrue\")" "Ok"
+        , progTest "(if (< 0 1) \"A\" \"B\")" "\"A\""
+        , progTest "(define (isEven n) (= (remainder n 2) 0)); (isEven 6)" "True"
         ]
