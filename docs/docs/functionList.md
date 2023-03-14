@@ -3,21 +3,45 @@
 
 ## Scheme
 
-
-### Data
-
-- 
-
-### Function Examples
-
 ### Define
 
-``
+``` 
 > (define x 3)
-```
-- `(define (isEven n) (= (remainder n 2) 0))`
-- `(if (< 0 1) "A" "B")`
+x
 
+> x
+3
+
+> (define (square x) (* x x))
+square
+
+> (square 4)
+16
+```
+
+Notice that you can look up values in the environment:
+
+```
+> (lookup square)
+[Lambda (L [Str "x"]) (L [Sym "*",Str "x",Str "x"])]
+```
+
+Something slightly more complex:
+
+```
+> (define (isEven n) (= (remainder n 2) 0))
+isEven
+
+> (isEven 17)
+False
+```
+
+### If
+
+```text
+> (if (< 0 1) A B)
+A
+```
 
 
 ## Function Dictionary

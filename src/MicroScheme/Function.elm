@@ -29,7 +29,13 @@ functionDict =
         , ( "<=", ltePredicate )
         , ( ">=", gtePredicate )
         , ( "remainder", remainder )
+        , ( "lookup", displayEnvironment )
         ]
+
+
+displayEnvironment : List Expr -> Result EvalError Expr
+displayEnvironment exprs =
+    Ok (L (Str "env" :: exprs))
 
 
 remainder : List Expr -> Result EvalError Expr

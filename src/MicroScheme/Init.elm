@@ -15,7 +15,7 @@ symbolStrings =
     , ">="
     , "roundTo"
     , "remainder"
-    , "!env"
+    , "lookup"
     ]
 
 

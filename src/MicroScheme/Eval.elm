@@ -1,5 +1,6 @@
 module MicroScheme.Eval exposing (eval)
 
+import Dict
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..))
@@ -61,24 +62,34 @@ evalResult env resultExpr =
                     Err <| EvalError 0 ("Unknown symbol: " ++ name)
 
                 L exprList_ ->
-                    Err <| EvalError -1 <| "!!! "
+                    Err <| EvalError -1 <| "!!! " ++ Debug.toString exprList_
 
                 _ ->
                     Err <| EvalError 0 <| "Missing case (eval), expr = XXX"
 
 
+dispatchFunction : Environment -> String -> List Expr -> Result EvalError Expr
 dispatchFunction env functionName args =
-    case Function.dispatch functionName of
-        Err _ ->
-            Err (EvalError 3 ("dispatch " ++ functionName ++ " did not return a value"))
+    if functionName == "lookup" then
+        Ok (Display args)
 
-        Ok f ->
-            case evalArgs env args of
-                Err _ ->
-                    Err (EvalError 5 functionName)
+    else
+        case Function.dispatch functionName of
+            Err _ ->
+                Err (EvalError 3 ("dispatch " ++ functionName ++ " did not return a value"))
 
-                Ok actualArgs ->
-                    f actualArgs
+            Ok f ->
+                case evalArgs env args of
+                    Err _ ->
+                        Err (EvalError 5 functionName)
+
+                    Ok actualArgs ->
+                        f actualArgs
+
+
+getEnviromentValue : Environment -> String -> Maybe Expr
+getEnviromentValue env key =
+    Dict.get key (Environment.root env).bindings
 
 
 evalBoolExpr env boolExpr_ expr1 expr2 =

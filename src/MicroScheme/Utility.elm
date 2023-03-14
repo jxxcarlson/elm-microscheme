@@ -26,5 +26,8 @@ display expr =
         Sym s ->
             s
 
+        Display expr_ ->
+            Debug.toString expr_
+
         u ->
-            "Unprocessable expression"
+            "I don't know how to display that expression: " ++ Debug.toString expr

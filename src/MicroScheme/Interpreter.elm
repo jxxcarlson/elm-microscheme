@@ -94,7 +94,7 @@ step state =
 
         Ok expr ->
             case expr of
-                Sym "!env" ->
+                Sym "lookup" ->
                     { state | output = Debug.toString state.environment }
 
                 Define (Str name) value ->
