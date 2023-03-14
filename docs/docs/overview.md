@@ -98,7 +98,7 @@ evalResult env resultExpr =
 
 Function `evalResult` matches the various patterns presented by
 `expr`, mapping them to handlers which act on various subexpressions, returning a value of 
-type `Result EvalError Expr`.  An example, the pattern
+type `Result EvalError Expr`.  As an example, the pattern
 `L ((Sym functionName) :: args)` is handle by the function call
 `dispatchFunction env functionName args`, which operates by 
 evaluating `arg` using the environment `env`, then applying
