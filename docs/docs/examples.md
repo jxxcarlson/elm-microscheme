@@ -6,11 +6,35 @@
 ### Constructors
 
 ```text
+> (cons 4 5)
+(4 . 5)
+
+> (cons 1 (quote (2 3)))
+(1 2 3)
+
 > (cons (+ 1 2 3) 5)
 (6 . 5)
 
 > (cons (quote (+ 1 2 3)) 5)
 ((+ 1 2 3) . 5)
+
+> (list 1 2 3)
+(1 2 3)
+
+> (cons 0 (list 1 2 3))
+(0 1 2 3)
+
+> (car (list 1 2 3))
+1
+
+> (car (quote (1 2 3))
+1
+
+> (cdr (list 1 2 3))
+(2 3)
+
+> (cdr (quote (1 2 3)))
+(2 3)
 ```
 
 

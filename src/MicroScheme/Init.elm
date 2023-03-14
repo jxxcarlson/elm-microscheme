@@ -18,6 +18,7 @@ symbolStrings =
     , "lookup"
     , "quote"
     , "cons"
+    , "list"
     , "car"
     , "cdr"
     ]
