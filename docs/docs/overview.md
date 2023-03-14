@@ -72,6 +72,9 @@ evalResult env resultExpr =
 
                 Sym s ->
                     Ok (Sym s)
+                    
+                Str s ->
+                    Ok (Str s)                   
 
                 L ((Sym functionName) :: args) ->
                     dispatchFunction env functionName args
@@ -97,15 +100,17 @@ evalResult env resultExpr =
 
 
 Function `evalResult` matches the various patterns presented by
-`expr`, mapping them to handlers which act on various subexpressions, returning a value of 
+`expr`, mapping them to handlers which act on the subexpressions
+or the pattern, returning a value of 
 type `Result EvalError Expr`.  As an example, the pattern
-`L ((Sym functionName) :: args)` is handle by the function call
+`L ((Sym functionName) :: args)` is handlde by the function call
 `dispatchFunction env functionName args`, which operates by 
-evaluating `arg` using the environment `env`, then applying
-the function of type `List Expr -> Result EvalError Expr` that it finds for the key `functionName`
+evaluating `args` using the environment `env`, then applying
+the function of type `List Expr -> Result EvalError Expr`. 
+This function is gotten by looking up the key `functionName`
 in a suitable dictionary.
 
-One more example: the function `applyLambdaToExpressionList`  creates a temporary frame with
+One more example. The function `applyLambdaToExpressionList`  creates a temporary frame with
 bindings for the variable names and arguments of the 
 lambda expression, then uses that frame to
 resolve the names which appear in the function
