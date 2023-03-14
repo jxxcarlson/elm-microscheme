@@ -6,4 +6,5 @@ nav:
   - Home: 'about.md'
   - Overview: 'overview.md'
   - Notes: 'notes.md'
+  - Functions: 'functinList.md'
   - Mkdocs:  'index.md'
