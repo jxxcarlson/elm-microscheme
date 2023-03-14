@@ -5,6 +5,7 @@ import MicroScheme.Eval as Eval
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame
 import MicroScheme.Parser as Parser
+import MicroScheme.Utility as Utility
 
 
 type alias State =
@@ -80,6 +81,9 @@ runProgram separator inputString =
 step : State -> State
 step state =
     let
+        _ =
+            Debug.log "ENV" state.environment
+
         parsed =
             Parser.parse (Environment.root state.environment) state.input |> Debug.log "PARSED"
     in
@@ -94,8 +98,8 @@ step state =
                 Sym "!env" ->
                     { state | output = Debug.toString state.environment }
 
-                Define (Str name) body ->
-                    { state | environment = Environment.addSymbolToRoot name body state.environment, output = name }
+                Define (Str name) value ->
+                    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
 
                 Define (L ((Str name) :: args)) (L body) ->
                     let
@@ -120,31 +124,4 @@ step state =
                             { state | output = "error (17): " ++ Debug.toString error ++ " , expr (" ++ Debug.toString expr ++ ")" }
 
                         Ok value ->
-                            { state | output = display value }
-
-
-display : Expr -> String
-display expr =
-    case expr of
-        Z n ->
-            String.fromInt n
-
-        F x ->
-            String.fromFloat x
-
-        B b ->
-            case b of
-                True ->
-                    "True"
-
-                False ->
-                    "False"
-
-        Str s ->
-            s
-
-        Sym s ->
-            s
-
-        u ->
-            "Unprocessable expression"
+                            { state | output = Utility.display value }
