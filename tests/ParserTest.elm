@@ -1,24 +1,27 @@
-module ParserTest exposing (..)
+module ParserTest exposing (evalSuite, parserSuite)
 
 import Expect exposing (Expectation)
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Init exposing (rootFrame)
+import MicroScheme.Interpreter as Interpreter
 import MicroScheme.Parser exposing (parse)
 import Test exposing (..)
-
-
-p =
-    parse rootFrame
 
 
 parseTest input output =
     test input <|
         \_ ->
-            Expect.equal (p input) output
+            Expect.equal (parse rootFrame input) output
 
 
-suite : Test
-suite =
+progTest input output =
+    test input <|
+        \_ ->
+            Expect.equal (Interpreter.runProgram ";" input) output
+
+
+parserSuite : Test
+parserSuite =
     describe "The Parser module"
         [ parseTest "1" (Ok (Z 1))
         , parseTest "1.2" (Ok (F 1.2))
@@ -30,4 +33,18 @@ suite =
         , parseTest "(define (square x) (* x x))" (Ok (Define (L [ Str "square", Str "x" ]) (L [ Str "*", Str "x", Str "x" ])))
         , parseTest "(lambda (x y) (* x y))" (Ok (Lambda (L [ Str "x", Str "y" ]) (L [ Str "*", Str "x", Str "y" ])))
         , parseTest "(if (> a 0) 1 -1)" (Ok (If (L [ Str ">", Str "a", Z 0 ]) (Z 1) (Str "-1")))
+        ]
+
+
+evalSuite : Test
+evalSuite =
+    describe "The Interpreter and Eval module"
+        [ progTest "1" "1"
+        , progTest "(define a 5); a" "5"
+        , progTest "(+ 1 2)" "3"
+        , progTest "(* (+ 1 2) (+ 3 4))" "21"
+        , progTest "(define (square x) (* x x)); (square (square 6))" "1296"
+        , progTest "(< 0 1)" "True"
+        , progTest "(< 1 0)" "False"
+        , progTest "(if (< 0 1) \"Ok\" \"Untrue\")" "Ok"
         ]
