@@ -87,6 +87,9 @@ step state =
 
         Ok expr ->
             case expr of
+                Sym "!env" ->
+                    { state | output = Debug.toString state.environment }
+
                 Define (Str name) body ->
                     { state | environment = Environment.addSymbolToRoot name body state.environment, output = name }
 
