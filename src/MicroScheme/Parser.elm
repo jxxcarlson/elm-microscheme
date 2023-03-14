@@ -26,7 +26,7 @@ import Set
 -}
 parse : Frame -> String -> Result (List P.DeadEnd) Expr
 parse frame str =
-    P.run exprParser str |> Result.map (Frame.resolve frame) |> Debug.log "PARSE"
+    P.run exprParser str |> Result.map (Frame.resolve frame) |> Debug.log "PARSE (1)"
 
 
 exprParser : P.Parser Expr

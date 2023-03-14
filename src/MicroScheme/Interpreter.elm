@@ -3,6 +3,7 @@ module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
 import MicroScheme.Expr exposing (Expr(..))
+import MicroScheme.Frame as Frame
 import MicroScheme.Parser as Parser
 
 
@@ -23,7 +24,7 @@ init str =
 
 input : String -> State -> State
 input str state =
-    { state | input = str }
+    { state | input = String.trim str }
 
 
 {-|
@@ -78,7 +79,7 @@ runProgram separator inputString =
 -}
 step : State -> State
 step state =
-    case Parser.parse (Environment.root state.environment) state.input of
+    case Parser.parse (Environment.root state.environment) state.input |> Debug.log "PARSE (2)" of
         Err err ->
             { state
                 | output = "Parse error: " ++ Debug.toString err
@@ -86,22 +87,22 @@ step state =
 
         Ok expr ->
             case expr of
-                --L [ SF Define, Str name, expr_ ] ->
-                --    { state | environment = Environment.addSymbolToRoot name expr_ state.environment, output = name }
-                --L [ SF Define, L ((Str name) :: args), L body ] ->
-                --    { state
-                --        | environment =
-                --            Environment.addSymbolToRoot name
-                --                (L [ SF Lambda, L args, L body ])
-                --                state.environment
-                --        , output = name
-                --    }
+                Define (Str name) body ->
+                    { state | environment = Environment.addSymbolToRoot name body state.environment |> Debug.log "ST", output = name }
+
+                Define (L ((Str name) :: args)) (L body) ->
+                    let
+                        newBody =
+                            List.map (Frame.resolve (Environment.root state.environment)) body
+                    in
+                    { state | environment = Environment.addSymbolToRoot name (Lambda (L args) (L newBody)) state.environment |> Debug.log "ST", output = name }
+
                 _ ->
-                    case Eval.eval expr of
-                        Err error ->
+                    case Eval.eval state.environment expr of
+                        ( env, Err error ) ->
                             { state | output = Debug.toString error }
 
-                        Ok value ->
+                        ( env, Ok value ) ->
                             { state | output = display value }
 
 

@@ -1,5 +1,6 @@
 module MicroScheme.Eval exposing (eval)
 
+import MicroScheme.Environment exposing (Environment)
 import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
@@ -19,36 +20,55 @@ import Result.Extra
     "42" : String
 
 -}
-eval : Expr -> Result EvalError Expr
-eval expr =
-    evalResult (Ok expr)
+eval : Environment -> Expr -> ( Environment, Result EvalError Expr )
+eval env expr =
+    evalResult ( env, Ok expr )
 
 
-evalResult : Result EvalError Expr -> Result EvalError Expr
-evalResult resultExpr =
+evalResult : ( Environment, Result EvalError Expr ) -> ( Environment, Result EvalError Expr )
+evalResult ( env, resultExpr ) =
     case resultExpr of
         Err error ->
-            Err error
+            ( env, Err error )
 
         Ok expr ->
             case expr of
                 Z n ->
-                    Ok (Z n)
+                    ( env, Ok (Z n) )
 
                 F r ->
-                    Ok (F r)
+                    ( env, Ok (F r) )
 
                 Sym s ->
-                    Ok (Sym s)
+                    ( env, Ok (Sym s) )
 
                 L ((Sym name) :: rest) ->
                     case Function.dispatch name of
                         Err _ ->
-                            Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value"))
+                            ( env, Err (EvalError 3 ("dispatch " ++ name ++ " did not return a value")) )
 
                         Ok f ->
-                            Result.map f (evalArgs rest) |> Result.Extra.join
+                            let
+                                g : List Expr -> Result EvalError Expr
+                                g =
+                                    f
 
+                                result : ( Environment, Result EvalError (List Expr) )
+                                result =
+                                    evalArgs env rest
+                            in
+                            case evalArgs env rest of
+                                ( env_, Err _ ) ->
+                                    ( env_, Err (EvalError 5 name) )
+
+                                ( env_, Ok actualArgs ) ->
+                                    ( env_, f actualArgs )
+
+                L ((Lambda (L params) (L body)) :: args) ->
+                    evalResult ( env, applyLambda params body args )
+
+                --(Lambda (L params) (L body)) (L args) ->
+                --    applyLambda params body args |> evalResult
                 --L ((L ((SF Lambda) :: (L params) :: (L body) :: [])) :: args) ->
                 --    applyLambda params body args |> evalResult
                 -- (L [SF If,L [L [SF Lambda,L [Str "n"],L [Sym "=",L [Sym "remainder",Str "n",Z 2],Z 0]],Z 4],Z 0,Z 1])
@@ -80,15 +100,20 @@ evalResult resultExpr =
                 --                _ ->
                 --                    Err (EvalError 4 "False, error evaluating predicate")
                 L ((Str name) :: rest) ->
-                    Err <| EvalError 0 ("Unknown symbol: " ++ name)
+                    ( env, Err <| EvalError 0 ("Unknown symbol: " ++ name) )
 
                 _ ->
-                    Err <| EvalError 0 <| "Missing case (eval): " ++ Debug.toString expr
+                    ( env, Err <| EvalError 0 <| "Missing case (eval): " ++ Debug.toString expr )
 
 
-evalArgs : List Expr -> Result EvalError (List Expr)
-evalArgs args =
-    List.map (evalResult << Ok) args |> Result.Extra.combine
+evalArgs : Environment -> List Expr -> ( Environment, Result EvalError (List Expr) )
+evalArgs env args =
+    let
+        result : Result EvalError (List Expr)
+        result =
+            List.map (\arg -> evalResult ( env, Ok arg )) args |> List.map Tuple.second |> Result.Extra.combine
+    in
+    ( env, result )
 
 
 applyLambda : List Expr -> List Expr -> List Expr -> Result EvalError Expr
@@ -98,11 +123,11 @@ applyLambda params body args =
         -- outside of this function.
         frameResult : Result Frame.FrameError Frame.Frame
         frameResult =
-            Frame.addBindings (Frame.varNames params) args Frame.empty
+            Frame.addBindings (Frame.varNames params) args Frame.empty |> Debug.log "BINDINGS"
     in
     case frameResult of
         Err frameError ->
-            Err frameError |> Result.mapError (\err -> FR err)
+            Err frameError |> Result.mapError (\err -> FR err) |> Debug.log "applyLambda (1)"
 
         Ok frame ->
-            Ok (List.map (Frame.resolve frame) body |> L)
+            Ok (List.map (Frame.resolve frame) body |> L) |> Debug.log "applyLambda (2)"
