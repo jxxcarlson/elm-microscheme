@@ -79,30 +79,30 @@ runProgram separator inputString =
 -}
 step : State -> State
 step state =
-    case Parser.parse (Environment.root state.environment) state.input |> Debug.log "PARSE (2)" of
+    case Parser.parse (Environment.root state.environment) state.input of
         Err err ->
             { state
-                | output = "Parse error: " ++ Debug.toString err
+                | output = "Parse error"
             }
 
         Ok expr ->
             case expr of
                 Define (Str name) body ->
-                    { state | environment = Environment.addSymbolToRoot name body state.environment |> Debug.log "ST", output = name }
+                    { state | environment = Environment.addSymbolToRoot name body state.environment, output = name }
 
                 Define (L ((Str name) :: args)) (L body) ->
                     let
                         newBody =
                             List.map (Frame.resolve (Environment.root state.environment)) body
                     in
-                    { state | environment = Environment.addSymbolToRoot name (Lambda (L args) (L newBody)) state.environment |> Debug.log "ST", output = name }
+                    { state | environment = Environment.addSymbolToRoot name (Lambda (L args) (L newBody)) state.environment, output = name }
 
                 _ ->
                     case Eval.eval state.environment expr of
-                        ( env, Err error ) ->
-                            { state | output = Debug.toString error }
+                        Err error ->
+                            { state | output = "error (!)" }
 
-                        ( env, Ok value ) ->
+                        Ok value ->
                             { state | output = display value }
 
 
@@ -129,10 +129,5 @@ display expr =
         Sym s ->
             s
 
-        --L [ SF Define, Str name, expr2 ] ->
-        --    " -- " ++ name ++ " <- " ++ display expr2
-        --
-        --L ((SF Define) :: (Str name) :: args :: body) ->
-        --    " -- " ++ name ++ ": defined"
         u ->
-            "Unprocessable expression: " ++ Debug.toString u
+            "Unprocessable expression"
