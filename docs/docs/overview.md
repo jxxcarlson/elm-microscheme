@@ -23,6 +23,19 @@ type Expr
 
 ## Parser
 
+Here is an example of how to run the parser:
+
+```elm
+$ elm repl
+
+> import MicroScheme.Parser exposing(parse)
+> import MicroScheme.Init exposing(rootFrame)
+
+> parse rootFrame "(+ 1 2)"
+Ok (L [Sym "+",Z 1,Z 2])
+```
+
+The module `Parser` has `parse` as its single export:
 
 ```text
 parse : Frame -> String -> Result (List P.DeadEnd) Expr
@@ -31,17 +44,9 @@ parse table str =
 ```
 
 The first argument of `parse` is the root frame, which
-is used to map certain values to symbols, e.g.,
-`Str "+"` to `Sym "+"`.  Thus we have
+is used to map string values to symbols, e.g.,
+`Str "+"` to `Sym "+"` as in the example above.
 
-```elm
-> import MicroScheme.Parser exposing(parse)
-> import MicroScheme.Init exposing(rootFrame)
-
-> parse rootFrame "(+ 1 2)"
-Ok (L [Sym "+",Z 1,Z 2])
-
-```
 
 ## Eval
 
