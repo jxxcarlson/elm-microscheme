@@ -85,6 +85,7 @@ step state =
         parsed =
             Parser.parse (Environment.root state.environment) state.input
                 |> Result.map (Frame.resolve [] (Environment.root state.environment))
+                |> Debug.log "PARSE"
     in
     case parsed of
         Err err ->

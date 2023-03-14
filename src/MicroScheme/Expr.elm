@@ -13,3 +13,4 @@ type Expr
     | Define Expr Expr
     | If Expr Expr Expr
     | Display (List Expr)
+    | Quote Expr

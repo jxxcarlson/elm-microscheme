@@ -1,7 +1,18 @@
-# Function List
+# Examples
 
 
 ## Scheme
+
+### Constructors
+
+```text
+> (cons (+ 1 2 3) 5)
+(6 . 5)
+
+> (cons (quote (+ 1 2 3)) 5)
+((+ 1 2 3) . 5)
+```
+
 
 ### Define
 

@@ -16,6 +16,10 @@ symbolStrings =
     , "roundTo"
     , "remainder"
     , "lookup"
+    , "quote"
+    , "cons"
+    , "car"
+    , "cdr"
     ]
 
 

@@ -46,6 +46,20 @@ evalResult env resultExpr =
                 Sym s ->
                     Ok (Sym s)
 
+                L ((Sym "quote") :: arg :: []) ->
+                    Ok (Quote arg)
+
+                L ((Sym "quote") :: args) ->
+                    Ok (Quote (L args))
+
+                L ((Sym "cons") :: a :: b :: []) ->
+                    case ( eval env a, eval env b ) of
+                        ( Ok aa, Ok bb ) ->
+                            Ok (Pair aa bb)
+
+                        _ ->
+                            Err (EvalError 23 "Could not evaluate compoments of pair")
+
                 L ((Sym functionName) :: args) ->
                     dispatchFunction env functionName args
 
