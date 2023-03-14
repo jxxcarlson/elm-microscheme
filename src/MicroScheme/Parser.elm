@@ -29,10 +29,25 @@ parse frame str =
     P.run exprParser str |> Result.map (Frame.resolve frame)
 
 
+pairParser : P.Parser Expr
+pairParser =
+    P.succeed Pair
+        |. P.symbol "("
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |. P.symbol ","
+        |. P.spaces
+        |= P.lazy (\_ -> exprParser)
+        |. P.spaces
+        |. P.symbol ")"
+
+
 exprParser : P.Parser Expr
 exprParser =
     P.oneOf
-        [ lambdaParser
+        [ P.backtrackable pairParser
+        , lambdaParser
         , defineParser
         , ifParser
         , P.lazy (\_ -> listParser)

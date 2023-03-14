@@ -8,6 +8,7 @@ type Expr
     | Str String
     | Sym String
     | L (List Expr)
+    | Pair Expr Expr
     | Lambda Expr Expr
     | Define Expr Expr
     | If Expr Expr Expr
