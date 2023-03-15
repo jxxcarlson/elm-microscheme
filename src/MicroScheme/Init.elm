@@ -21,6 +21,7 @@ symbolStrings =
     , "list"
     , "car"
     , "cdr"
+    , "map"
     ]
 
 

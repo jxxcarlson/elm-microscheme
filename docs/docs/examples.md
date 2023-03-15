@@ -3,7 +3,7 @@
 
 ## Scheme
 
-### Constructors
+### Constructors and destructors
 
 ```text
 > (cons 4 5)
@@ -36,7 +36,15 @@
 > (cdr (quote (1 2 3)))
 (2 3)
 ```
+### Higher order
 
+```text
+> (define (inc x) (+ 1 x))
+inc
+
+> (map inc (list 1 2 3))
+(2 3 4)
+```
 
 ### Define
 

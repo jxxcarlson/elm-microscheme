@@ -33,6 +33,14 @@ evalResult env resultExpr =
             Err error
 
         Ok expr ->
+            let
+                foo =
+                    L
+                        [ Sym "map"
+                        , Lambda (L [ Str "x" ]) (L [ Sym "*", Str "x", Str "x" ])
+                        , L [ Sym "list", Z 1, Z 2, Z 3, Z 4 ]
+                        ]
+            in
             case expr of
                 Z n ->
                     Ok (Z n)
@@ -51,6 +59,21 @@ evalResult env resultExpr =
 
                 L ((Sym "quote") :: args) ->
                     Ok (L args)
+
+                L ((Sym "map") :: lambda :: args) ->
+                    let
+                        evaluatedArgs : Result EvalError (List Expr)
+                        evaluatedArgs =
+                            List.map (eval env) args |> Result.Extra.combine
+                    in
+                    case evaluatedArgs of
+                        Ok [ L exprs ] ->
+                            List.map (\item -> eval env (L (lambda :: item :: []))) exprs
+                                |> Result.Extra.combine
+                                |> Result.map L
+
+                        _ ->
+                            Err (EvalError 39 "can't evaluate map")
 
                 L ((Sym "list") :: args) ->
                     Ok (L args)
