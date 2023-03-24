@@ -1,17 +1,59 @@
-# Welcome to MkDocs
+# Elm-MicroScheme
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Elm-Microscheme is an implementation of a tiny
+subset of Scheme written in [Elm](https://elm-lang.org).
+Since the aim of the project is educational — to understand
+how to build a Scheme interpreter — I intend to
+keep the codebase very small even as I work to
+add new features, e.g., a proper treatment
+of environments. A good exercise is to
+fork the project and
+add whatever features to it that you find interesting
+or useful.
 
-## Commands
+This project is open-source, with the code
+on [GitHub](https://github.com/jxxcarlson/elm-microscheme).
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Directions
 
-## Project layout
+To compile and run the interpreter, say `sh run.sh`
+on the command line.  This command will compile
+the code and start up the command-line interface
+to the interpreter.  Below is a screenshot of
+a short session with the interpreter.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+
+
+![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/acc94706-64d3-41d5-f1f2-479adeeac900/public
+)
+
+
+## Layout of the code
+
+
+```text
+----------------------------------------------------------------------------------
+File                                           blank        comment           code
+----------------------------------------------------------------------------------
+src/MicroScheme/Parser.elm                        40             16            115
+src/MicroScheme/Numbers.elm                       45              1            107
+src/MicroScheme/Function.elm                      40              0            103
+src/MicroScheme/Eval.elm                          33             13             94
+src/MicroScheme/Interpreter.elm                   37             26             83
+src/MicroScheme/Frame.elm                         29              0             73
+src/MicroScheme/Environment.elm                   21              1             53
+src/Main.elm                                      22              0             41
+src/MicroScheme/Init.elm                           7              0             22
+src/repl.js                                        8              4             19
+src/MicroScheme/Expr.elm                           2              0             12
+src/MicroScheme/Error.elm                          3              0              5
+----------------------------------------------------------------------------------
+SUM:                                             287             61            727
+----------------------------------------------------------------------------------
+```
+
+
+
+
+
+

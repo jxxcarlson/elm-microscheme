@@ -3,8 +3,8 @@ site_name: Elm-MicroScheme
 theme: readthedocs
 
 nav:
-  - Home: 'about.md'
+  - Home: 'index.md'
   - Overview: 'overview.md'
   - Notes: 'notes.md'
   - Examples: 'examples.md'
-  - Mkdocs:  'index.md'
+

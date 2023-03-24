@@ -26,6 +26,16 @@ function myWriter(output) {
   return output
 }
 
-console.log("\n  --------------------------------\n    MicroScheme Interpreter V0.1.2\n\n    Example: > (+ 1 2 3)\n\n    Type 'help' for more information\n    --------------------------------\n")
+let leadingSpace = "    "
+let helpDivider = leadingSpace + "---------------------------------------------\n"
+let helpTitle = leadingSpace + "MicroScheme Interpreter V0.1.2\n\n"
+let helpExample = leadingSpace + "Example: > (+ 1 2 3)\n\n"
+let helpMoreInfo = leadingSpace + "Type 'help' for more information\n"
+let helpReference1 = leadingSpace + "Reference manual:\n"
+let helpReference2 = leadingSpace + "https://jxxcarlson.github.io/elm-microscheme/\n"
+let helpString = "\n" + helpDivider + helpTitle + helpExample + helpMoreInfo + "\n" + helpReference1 + helpReference2 + helpDivider
+
+console.log(helpString)
 
 repl.start({ prompt: '> ', eval: eval, writer: myWriter});
+
