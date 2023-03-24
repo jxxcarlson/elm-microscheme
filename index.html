@@ -12,7 +12,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Mkdocs";
+        var mkdocs_page_name = "Home";
         var mkdocs_page_input_path = "index.md";
         var mkdocs_page_url = null;
       </script>
@@ -40,8 +40,14 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="about/">Home</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#directions">Directions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#layout-of-the-code">Layout of the code</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -54,16 +60,6 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="examples/">Examples</a>
-                </li>
-              </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href=".">Mkdocs</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#commands">Commands</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#project-layout">Project layout</a>
-    </li>
-    </ul>
                 </li>
               </ul>
       </div>
@@ -80,7 +76,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Mkdocs</li>
+      <li>Home</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -89,26 +85,51 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
-<p>For full documentation visit <a href="https://www.mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
-<ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs -h</code> - Print help message and exit.</li>
-</ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
+                <h1 id="elm-microscheme">Elm-MicroScheme</h1>
+<p>Elm-Microscheme is an implementation of a tiny
+subset of Scheme written in <a href="https://elm-lang.org">Elm</a>.
+Since the aim of the project is educational — to understand
+how to build a Scheme interpreter — I intend to
+keep the codebase very small even as I work to
+add new features, e.g., a proper treatment
+of environments. A good exercise is to
+fork the project and
+add whatever features to it that you find interesting
+or useful.</p>
+<p>This project is open-source, with the code
+on <a href="https://github.com/jxxcarlson/elm-microscheme">GitHub</a>.</p>
+<h2 id="directions">Directions</h2>
+<p>To compile and run the interpreter, say <code>sh run.sh</code>
+on the command line.  This command will compile
+the code and start up the command-line interface
+to the interpreter.  Below is a screenshot of
+a short session with the interpreter.</p>
+<p><img alt="Running Interpreter" src="https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7bb38caa-c314-48f0-6626-a90140b12c00/public" /></p>
+<h2 id="layout-of-the-code">Layout of the code</h2>
+<pre><code class="language-text">----------------------------------------------------------------------------------
+File                                           blank        comment           code
+----------------------------------------------------------------------------------
+src/MicroScheme/Parser.elm                        40             16            115
+src/MicroScheme/Numbers.elm                       45              1            107
+src/MicroScheme/Function.elm                      40              0            103
+src/MicroScheme/Eval.elm                          33             13             94
+src/MicroScheme/Interpreter.elm                   37             26             83
+src/MicroScheme/Frame.elm                         29              0             73
+src/MicroScheme/Environment.elm                   21              1             53
+src/Main.elm                                      22              0             41
+src/MicroScheme/Init.elm                           7              0             22
+src/repl.js                                        8              4             19
+src/MicroScheme/Expr.elm                           2              0             12
+src/MicroScheme/Error.elm                          3              0              5
+----------------------------------------------------------------------------------
+SUM:                                             287             61            727
+----------------------------------------------------------------------------------
 </code></pre>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="examples/" class="btn btn-neutral float-left" title="Examples"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -131,8 +152,8 @@ docs/
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="examples/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+      <span><a href="overview/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -151,5 +172,5 @@ docs/
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2023-03-24 17:49:41.083462+00:00
+Build Date UTC : 2023-03-24 18:04:14.125429+00:00
 -->
