@@ -24,6 +24,7 @@ symbolStrings =
     , "cdr"
     , "map"
     , "help"
+    , "debug"
     ]
 
 

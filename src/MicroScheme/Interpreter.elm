@@ -5,15 +5,17 @@ import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame
+import MicroScheme.Help as Help
 import MicroScheme.Parser as Parser
 import MicroScheme.Utility as Utility
 import Parser exposing (DeadEnd)
-import MicroScheme.Help as Help
+
 
 type alias State =
     { input : String
     , output : String
     , environment : Environment
+    , debug : Bool
     }
 
 
@@ -22,6 +24,7 @@ init str =
     { input = str
     , output = ""
     , environment = Environment.initial
+    , debug = False
     }
 
 
@@ -90,8 +93,12 @@ step state =
         parsed =
             Parser.parse (Environment.root state.environment) state.input
                 |> Result.map (Frame.resolve [] (Environment.root state.environment))
+                |> (if state.debug then
+                        Debug.log "  PARSE"
 
-        -- |> Debug.log "PARSE"
+                    else
+                        identity
+                   )
     in
     case parsed of
         Err err ->
@@ -104,8 +111,23 @@ step state =
                 Sym "lookup" ->
                     { state | output = Debug.toString state.environment }
 
+                Sym "debug" ->
+                    let
+                        newDebug =
+                            not state.debug
+                    in
+                    { state
+                        | debug = newDebug
+                        , output =
+                            if newDebug then
+                                "  true"
+
+                            else
+                                "  false"
+                    }
+
                 Sym "help" ->
-                    {state | output = Help.text}
+                    { state | output = Help.text }
 
                 Define (Str name) value ->
                     { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }

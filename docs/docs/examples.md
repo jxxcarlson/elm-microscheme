@@ -36,15 +36,6 @@
 > (cdr (quote (1 2 3)))
 (2 3)
 ```
-### Higher order
-
-```text
-> (define (inc x) (+ 1 x))
-inc
-
-> (map inc (list 1 2 3))
-(2 3 4)
-```
 
 ### Define
 
@@ -62,11 +53,52 @@ square
 16
 ```
 
+### Higher order
+
+```text
+> (define (inc x) (+ 1 x))
+inc
+
+> (map inc (list 1 2 3))
+(2 3 4)
+```
+
+
+### Lambda
+
+```text
+> ((Lambda (x) (* x x)) 2)
+4
+
+> (map (Lambda (x) (* x x)) (list 1 2 3 4))
+(1 4 9 16)
+```
+
 Notice that you can look up values in the environment:
 
 ```
 > (lookup square)
 [Lambda (L [Str "x"]) (L [Sym "*",Str "x",Str "x"])]
+```
+
+You can turn debugging on and off:
+
+```text
+    Debug
+    -----
+
+    > (+ 1 2)
+    3
+    > debug
+      true
+    > (+ 1 2)
+    PARSE: Ok (L [Sym "+",Z 1,Z 2])
+    3
+    > debug
+    PARSE: Ok (Sym "debug")
+    false
+    > (+ 1 2)
+    3
 ```
 
 Something slightly more complex:
