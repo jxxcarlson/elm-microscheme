@@ -11,6 +11,7 @@ when inside the directory containing this file.
 
 -}
 
+import NoDeprecated
 import NoExposingEverything
 import NoImportingEverything
 import NoMissingTypeAnnotation
@@ -26,4 +27,5 @@ config =
     , NoMissingTypeAnnotation.rule
     , NoMissingTypeAnnotationInLetIn.rule
     , NoMissingTypeExpose.rule
+    , NoDeprecated.rule NoDeprecated.defaults
     ]
