@@ -1,6 +1,6 @@
 module ParserTest exposing (evalSuite, parserSuite)
 
-import Expect exposing (Expectation)
+import Expect
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Init exposing (rootFrame)
 import MicroScheme.Interpreter as Interpreter

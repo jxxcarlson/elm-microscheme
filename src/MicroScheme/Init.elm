@@ -2,7 +2,7 @@ module MicroScheme.Init exposing (rootFrame)
 
 import Dict
 import MicroScheme.Expr exposing (Expr(..))
-import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Frame exposing (Frame)
 
 
 symbolStrings : List String

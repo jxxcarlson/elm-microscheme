@@ -18,6 +18,8 @@ import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
 import NoMissingTypeExpose
 import NoUnused.Dependencies
+import NoUnused.Modules
+import NoUnused.Variables
 import Review.Rule exposing (Rule)
 
 
@@ -30,4 +32,6 @@ config =
     , NoMissingTypeExpose.rule
     , NoDeprecated.rule NoDeprecated.defaults
     , NoUnused.Dependencies.rule
+    , NoUnused.Modules.rule
+    , NoUnused.Variables.rule
     ]

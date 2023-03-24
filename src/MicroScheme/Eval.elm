@@ -1,10 +1,9 @@
 module MicroScheme.Eval exposing (eval)
 
-import Dict
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Error exposing (EvalError(..))
 import MicroScheme.Expr exposing (Expr(..))
-import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Frame as Frame
 import MicroScheme.Function as Function
 import Result.Extra
 
@@ -164,11 +163,6 @@ dispatchFunction env functionName args =
 
                     Ok actualArgs ->
                         f actualArgs
-
-
-getEnviromentValue : Environment -> String -> Maybe Expr
-getEnviromentValue env key =
-    Dict.get key (Environment.root env).bindings
 
 
 evalBoolExpr : Environment -> List Expr -> Expr -> Expr -> Result EvalError Expr

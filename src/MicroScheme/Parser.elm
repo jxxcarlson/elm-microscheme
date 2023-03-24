@@ -1,9 +1,8 @@
 module MicroScheme.Parser exposing (parse)
 
-import MicroScheme.Expr as Expr exposing (Expr(..))
-import MicroScheme.Frame as Frame exposing (Frame)
+import MicroScheme.Expr exposing (Expr(..))
+import MicroScheme.Frame exposing (Frame)
 import Parser as P exposing ((|.), (|=))
-import Set
 
 
 {-|
@@ -114,19 +113,6 @@ intParser =
 floatParser : P.Parser Expr
 floatParser =
     P.map F P.float
-
-
-stringParser1 : P.Parser Expr
-stringParser1 =
-    P.map Str
-        (P.variable
-            { start = \c -> Char.isAlpha c || List.member c [ '=', '<', '>' ]
-
-            -- not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
-            , inner = \c -> Char.isAlphaNum c && (c /= ')')
-            , reserved = Set.fromList [ "eval", "define", "if", "display" ]
-            }
-        )
 
 
 stringParser : P.Parser Expr

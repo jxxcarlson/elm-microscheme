@@ -12,7 +12,7 @@ module MicroScheme.Environment exposing
 import MicroScheme.Expr exposing (Expr)
 import MicroScheme.Frame as Frame exposing (Frame, FrameId)
 import MicroScheme.Init as Init
-import Tree exposing (Tree)
+import Tree
 import Tree.Zipper exposing (Zipper)
 
 
