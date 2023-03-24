@@ -15,6 +15,7 @@ import NoExposingEverything
 import NoImportingEverything
 import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
+import NoMissingTypeExpose
 import Review.Rule exposing (Rule)
 
 
@@ -24,4 +25,5 @@ config =
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
     , NoMissingTypeAnnotationInLetIn.rule
+    , NoMissingTypeExpose.rule
     ]

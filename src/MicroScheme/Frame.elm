@@ -1,5 +1,6 @@
 module MicroScheme.Frame exposing
-    ( Frame
+    ( Bindings
+    , Frame
     , FrameError(..)
     , FrameId
     , addBinding

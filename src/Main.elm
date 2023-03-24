@@ -1,4 +1,4 @@
-port module Main exposing (main)
+port module Main exposing (Flags, Model, Msg(..), main)
 
 import Cmd.Extra exposing (withCmd, withCmds, withNoCmd)
 import MicroScheme.Interpreter as Interpreter
