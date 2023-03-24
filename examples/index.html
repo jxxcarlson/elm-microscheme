@@ -55,9 +55,11 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#constructors-and-destructors">Constructors and destructors</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#define">Define</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#higher-order">Higher order</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#define">Define</a>
+    <li class="toctree-l3"><a class="reference internal" href="#lambda">Lambda</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#if">If</a>
     </li>
@@ -130,13 +132,6 @@
 &gt; (cdr (quote (1 2 3)))
 (2 3)
 </code></pre>
-<h3 id="higher-order">Higher order</h3>
-<pre><code class="language-text">&gt; (define (inc x) (+ 1 x))
-inc
-
-&gt; (map inc (list 1 2 3))
-(2 3 4)
-</code></pre>
 <h3 id="define">Define</h3>
 <pre><code>&gt; (define x 3)
 x
@@ -150,9 +145,40 @@ square
 &gt; (square 4)
 16
 </code></pre>
+<h3 id="higher-order">Higher order</h3>
+<pre><code class="language-text">&gt; (define (inc x) (+ 1 x))
+inc
+
+&gt; (map inc (list 1 2 3))
+(2 3 4)
+</code></pre>
+<h3 id="lambda">Lambda</h3>
+<pre><code class="language-text">&gt; ((Lambda (x) (* x x)) 2)
+4
+
+&gt; (map (Lambda (x) (* x x)) (list 1 2 3 4))
+(1 4 9 16)
+</code></pre>
 <p>Notice that you can look up values in the environment:</p>
 <pre><code>&gt; (lookup square)
 [Lambda (L [Str &quot;x&quot;]) (L [Sym &quot;*&quot;,Str &quot;x&quot;,Str &quot;x&quot;])]
+</code></pre>
+<p>You can turn debugging on and off:</p>
+<pre><code class="language-text">    Debug
+    -----
+
+    &gt; (+ 1 2)
+    3
+    &gt; debug
+      true
+    &gt; (+ 1 2)
+    PARSE: Ok (L [Sym &quot;+&quot;,Z 1,Z 2])
+    3
+    &gt; debug
+    PARSE: Ok (Sym &quot;debug&quot;)
+    false
+    &gt; (+ 1 2)
+    3
 </code></pre>
 <p>Something slightly more complex:</p>
 <pre><code>&gt; (define (isEven n) (= (remainder n 2) 0))
