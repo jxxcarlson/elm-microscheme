@@ -1,4 +1,4 @@
-module MicroScheme.Error exposing (..)
+module MicroScheme.Error exposing (EvalError(..))
 
 import MicroScheme.Frame as Frame
 

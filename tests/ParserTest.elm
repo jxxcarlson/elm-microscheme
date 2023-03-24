@@ -5,7 +5,7 @@ import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Init exposing (rootFrame)
 import MicroScheme.Interpreter as Interpreter
 import MicroScheme.Parser exposing (parse)
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
 parseTest input output =
