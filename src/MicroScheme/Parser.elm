@@ -132,9 +132,11 @@ stringParser1 =
 stringParser : P.Parser Expr
 stringParser =
     let
+        prefix : Char -> Bool
         prefix =
             \c -> not <| List.member c [ '(', ')', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
 
+        continue : Char -> Bool
         continue =
             \c -> not <| List.member c [ ' ', ')' ]
     in

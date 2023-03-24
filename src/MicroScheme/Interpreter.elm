@@ -7,6 +7,7 @@ import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame
 import MicroScheme.Parser as Parser
 import MicroScheme.Utility as Utility
+import Parser exposing (DeadEnd)
 
 
 type alias State =
@@ -48,12 +49,15 @@ input str state =
 runProgram : String -> String -> String
 runProgram separator inputString =
     let
+        inputList : List String
         inputList =
             inputString |> String.split separator |> List.map String.trim
 
+        initialState : State
         initialState =
             init ""
 
+        finalState : State
         finalState =
             List.foldl (\str state_ -> state_ |> input str |> step) initialState inputList
     in
@@ -82,6 +86,7 @@ runProgram separator inputString =
 step : State -> State
 step state =
     let
+        parsed : Result (List DeadEnd) Expr
         parsed =
             Parser.parse (Environment.root state.environment) state.input
                 |> Result.map (Frame.resolve [] (Environment.root state.environment))
@@ -104,8 +109,10 @@ step state =
 
                 Define (L ((Str name) :: args)) (L body) ->
                     let
+                        argStrings : List String
                         argStrings =
                             let
+                                mapper : Expr -> Maybe String
                                 mapper expr_ =
                                     case expr_ of
                                         Str s ->
@@ -116,9 +123,11 @@ step state =
                             in
                             List.map mapper args |> Maybe.Extra.values
 
+                        newBody : List Expr
                         newBody =
                             List.map (Frame.resolve argStrings (Environment.root state.environment)) body
 
+                        value : Expr
                         value =
                             Lambda (L args) (L newBody)
                     in
@@ -126,6 +135,7 @@ step state =
 
                 Define (L ((Str name) :: args)) body ->
                     let
+                        value : Expr
                         value =
                             Lambda (L args) body
                     in

@@ -54,9 +54,11 @@ setFocus id environment =
 replaceRoot : Frame -> Environment -> Environment
 replaceRoot frame environment =
     let
+        id : FrameId
         id =
             currentId environment
 
+        newEnvironment_ : Zipper Frame
         newEnvironment_ =
             Tree.Zipper.replaceLabel frame (Tree.Zipper.root environment)
     in
@@ -71,6 +73,7 @@ replaceRoot frame environment =
 addSymbolToRoot : String -> Expr -> Environment -> Environment
 addSymbolToRoot name expr_ environment =
     let
+        newRoot : Frame
         newRoot =
             Frame.addSymbol name expr_ (root environment)
     in

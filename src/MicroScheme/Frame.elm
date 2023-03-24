@@ -48,9 +48,11 @@ addBinding ( str, expr ) frame =
 addBindings : List String -> List Expr -> Frame -> Result FrameError Frame
 addBindings vars exprs frame =
     let
+        nVars : Int
         nVars =
             List.length vars
 
+        nExprs : Int
         nExprs =
             List.length exprs
     in
@@ -59,6 +61,7 @@ addBindings vars exprs frame =
 
     else
         let
+            bindings : List ( String, Expr )
             bindings =
                 List.map2 (\a b -> ( a, b )) vars exprs
         in

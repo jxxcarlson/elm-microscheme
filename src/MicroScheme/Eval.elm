@@ -33,14 +33,6 @@ evalResult env resultExpr =
             Err error
 
         Ok expr ->
-            let
-                foo =
-                    L
-                        [ Sym "map"
-                        , Lambda (L [ Str "x" ]) (L [ Sym "*", Str "x", Str "x" ])
-                        , L [ Sym "list", Z 1, Z 2, Z 3, Z 4 ]
-                        ]
-            in
             case expr of
                 Z n ->
                     Ok (Z n)
@@ -100,6 +92,7 @@ evalResult env resultExpr =
                         _ =
                             Debug.log "CAR: args" args
 
+                        value : Result EvalError Expr
                         value =
                             Debug.log "CAR: value" (eval env args)
                     in
@@ -116,6 +109,7 @@ evalResult env resultExpr =
                         _ =
                             Debug.log "CDR: args" args
 
+                        value : Result EvalError Expr
                         value =
                             Debug.log "CDR, value" (eval env args)
                     in
@@ -180,6 +174,7 @@ getEnviromentValue env key =
 evalBoolExpr : Environment -> List Expr -> Expr -> Expr -> Result EvalError Expr
 evalBoolExpr env boolExpr_ expr1 expr2 =
     let
+        boolExpr : List Expr
         boolExpr =
             List.map (Environment.resolve [] env) boolExpr_
     in

@@ -51,12 +51,15 @@ update msg model =
 
             else
                 let
+                    state1 : Interpreter.State
                     state1 =
                         Interpreter.input input model.state
 
+                    state2 : Interpreter.State
                     state2 =
                         Interpreter.step state1
 
+                    output : String
                     output =
                         state2.output
                 in

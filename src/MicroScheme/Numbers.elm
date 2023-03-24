@@ -28,6 +28,7 @@ coerce exprs =
 roundTo : Int -> Float -> Float
 roundTo n x =
     let
+        factor : Float
         factor =
             10.0 ^ toFloat n
 
