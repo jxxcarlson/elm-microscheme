@@ -122,6 +122,16 @@ evalResult env resultExpr =
                 L ((Sym functionName) :: args) ->
                     dispatchFunction env functionName args
 
+                L [ Str "Lambda", L params, L body ] ->
+                    Ok (L [ Lambda (L params) (L body) ])
+
+                L ((L [ Str "Lambda", L params, L body ]) :: args) ->
+                    let
+                        lambdaExpr =
+                            L [ Lambda (L params) (L body) ]
+                    in
+                    evalResult env (applyLambdaToExpressionList params body args)
+
                 L ((Lambda (L params) (L body)) :: args) ->
                     evalResult env (applyLambdaToExpressionList params body args)
 
