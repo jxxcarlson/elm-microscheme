@@ -17,6 +17,7 @@ import NoImportingEverything
 import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
 import NoMissingTypeExpose
+import NoUnused.Dependencies
 import Review.Rule exposing (Rule)
 
 
@@ -28,4 +29,5 @@ config =
     , NoMissingTypeAnnotationInLetIn.rule
     , NoMissingTypeExpose.rule
     , NoDeprecated.rule NoDeprecated.defaults
+    , NoUnused.Dependencies.rule
     ]
