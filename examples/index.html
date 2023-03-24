@@ -63,6 +63,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#if">If</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#environment">Environment</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#function-dictionary">Function Dictionary</a>
@@ -159,7 +161,12 @@ inc
 &gt; (map (Lambda (x) (* x x)) (list 1 2 3 4))
 (1 4 9 16)
 </code></pre>
-<p>Notice that you can look up values in the environment:</p>
+<h3 id="if">If</h3>
+<pre><code class="language-text">&gt; (if (&lt; 0 1) A B)
+A
+</code></pre>
+<h3 id="environment">Environment</h3>
+<p>You can look up values in the environment:</p>
 <pre><code>&gt; (lookup square)
 [Lambda (L [Str &quot;x&quot;]) (L [Sym &quot;*&quot;,Str &quot;x&quot;,Str &quot;x&quot;])]
 </code></pre>
@@ -186,10 +193,6 @@ isEven
 
 &gt; (isEven 17)
 False
-</code></pre>
-<h3 id="if">If</h3>
-<pre><code class="language-text">&gt; (if (&lt; 0 1) A B)
-A
 </code></pre>
 <h2 id="function-dictionary">Function Dictionary</h2>
 <pre><code class="language-elm">functionDict : Dict String (List Expr -&gt; Result EvalError Expr)
