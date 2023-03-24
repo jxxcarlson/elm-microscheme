@@ -177,6 +177,7 @@ getEnviromentValue env key =
     Dict.get key (Environment.root env).bindings
 
 
+evalBoolExpr : Environment -> List Expr -> Expr -> Expr -> Result EvalError Expr
 evalBoolExpr env boolExpr_ expr1 expr2 =
     let
         boolExpr =

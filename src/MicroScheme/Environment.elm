@@ -26,6 +26,7 @@ resolve exceptions env expr =
     Frame.resolve exceptions (root env) expr
 
 
+initial : Zipper Frame
 initial =
     Tree.Zipper.fromTree (Tree.singleton Init.rootFrame)
 
@@ -67,6 +68,7 @@ replaceRoot frame environment =
             newEnvironment
 
 
+addSymbolToRoot : String -> Expr -> Environment -> Environment
 addSymbolToRoot name expr_ environment =
     let
         newRoot =

@@ -33,6 +33,7 @@ type FrameError
     = UnequalLists Int Int
 
 
+empty : { id : number, bindings : Dict k v }
 empty =
     { id = -1
     , bindings = Dict.empty

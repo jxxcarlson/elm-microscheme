@@ -5,6 +5,7 @@ import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame exposing (Frame)
 
 
+symbolStrings : List String
 symbolStrings =
     [ "+"
     , "*"
@@ -25,6 +26,7 @@ symbolStrings =
     ]
 
 
+symbols : List ( String, Expr )
 symbols =
     List.map (\s -> ( s, Sym s )) symbolStrings
 

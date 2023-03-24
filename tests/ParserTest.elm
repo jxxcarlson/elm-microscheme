@@ -5,15 +5,18 @@ import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Init exposing (rootFrame)
 import MicroScheme.Interpreter as Interpreter
 import MicroScheme.Parser exposing (parse)
+import Parser exposing (DeadEnd)
 import Test exposing (Test, describe, test)
 
 
+parseTest : String -> Result (List DeadEnd) Expr -> Test
 parseTest input output =
     test input <|
         \_ ->
             Expect.equal (parse rootFrame input) output
 
 
+progTest : String -> String -> Test
 progTest input output =
     test input <|
         \_ ->
