@@ -74,7 +74,16 @@ inc
 (1 4 9 16)
 ```
 
-Notice that you can look up values in the environment:
+### If
+
+```text
+> (if (< 0 1) A B)
+A
+```
+
+### Environment
+
+You can look up values in the environment:
 
 ```
 > (lookup square)
@@ -111,12 +120,6 @@ isEven
 False
 ```
 
-### If
-
-```text
-> (if (< 0 1) A B)
-A
-```
 
 
 ## Function Dictionary
