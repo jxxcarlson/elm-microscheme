@@ -23,6 +23,7 @@ symbolStrings =
     , "car"
     , "cdr"
     , "map"
+    , "help"
     ]
 
 

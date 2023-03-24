@@ -8,7 +8,7 @@ import MicroScheme.Frame as Frame
 import MicroScheme.Parser as Parser
 import MicroScheme.Utility as Utility
 import Parser exposing (DeadEnd)
-
+import MicroScheme.Help as Help
 
 type alias State =
     { input : String
@@ -103,6 +103,9 @@ step state =
             case expr of
                 Sym "lookup" ->
                     { state | output = Debug.toString state.environment }
+
+                Sym "help" ->
+                    {state | output = Help.text}
 
                 Define (Str name) value ->
                     { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
