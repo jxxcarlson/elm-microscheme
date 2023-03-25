@@ -9,6 +9,8 @@ symbolStrings : List String
 symbolStrings =
     [ "+"
     , "*"
+    , "/"
+    , "-"
     , "="
     , "<"
     , ">"
@@ -25,6 +27,9 @@ symbolStrings =
     , "map"
     , "help"
     , "debug"
+    , "null?"
+
+    -- , "eval"
     ]
 
 
