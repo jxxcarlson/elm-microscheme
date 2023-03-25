@@ -115,16 +115,18 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 33 "cdr: empty list")
 
-                L ((Sym functionName) :: args) ->
-                    let
-                        -- rawEvaluatedArgs : List (Result EvalError Expr)
-                        rawEvaluatedArgs : Result EvalError (List Expr)
-                        rawEvaluatedArgs =
-                            List.map (eval env) args |> Result.Extra.combine
+                L [ Sym "apply", Sym functionName, L args ] ->
+                    case eval env (L args) of
+                        Ok (L realArgs) ->
+                            dispatchFunction env functionName realArgs
 
-                        _ =
-                            Debug.log "rawEvaluatedArgs" rawEvaluatedArgs
-                    in
+                        Err error ->
+                            Err error
+
+                        _ ->
+                            Err (EvalError 99 "invalid arguments to 'apply'")
+
+                L ((Sym functionName) :: args) ->
                     case List.map (eval env) args |> Result.Extra.combine of
                         Ok evaluatedArgs ->
                             dispatchFunction env functionName evaluatedArgs
@@ -136,10 +138,6 @@ evalResult env resultExpr =
                     Ok (L [ Lambda (L params) (L body) ])
 
                 L ((L [ Str "Lambda", L params, L body ]) :: args) ->
-                    let
-                        lambdaExpr =
-                            L [ Lambda (L params) (L body) ]
-                    in
                     evalResult env (applyLambdaToExpressionList params body args)
 
                 L ((Lambda (L params) (L body)) :: args) ->

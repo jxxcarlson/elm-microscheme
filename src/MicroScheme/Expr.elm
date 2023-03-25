@@ -18,7 +18,7 @@ type Expr
 
 foo : Expr
 foo =
-    L [ Sym "+", L [ Sym "map", Lambda (L [ Str "x" ]) (L [ Sym "*", Str "x", Str "x" ]), L [ Z 1, Z 2, Z 3, Z 4 ] ] ]
+    L [ Sym "apply", Sym "+", L [ Sym "map", Lambda (L [ Str "x" ]) (L [ Sym "*", Str "x", Str "x" ]), L [ Sym "list", Z 1, Z 2, Z 3, Z 4 ] ] ]
 
 
 foo2 =

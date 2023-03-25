@@ -70,6 +70,9 @@ inc
 
 > (map inc (list 1 2 3))
 (2 3 4)
+
+> (map inc (list 1 2 3 4))
+(2 3 4 5)
 ```
 
 
@@ -84,6 +87,9 @@ inc
 
 > (map (lambda (x) (* x x)) (list 1 2 3 4))
 (1 4 9 16)
+
+> (apply + (map (lambda (x) (* x x)) (list 1 2 3 4)))
+30
 ```
 
 ### If
