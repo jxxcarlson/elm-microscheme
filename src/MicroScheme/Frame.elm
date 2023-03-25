@@ -110,5 +110,8 @@ resolve exceptions frame expr =
         Define expr1 expr2 ->
             Define expr1 (resolve exceptions frame expr2)
 
+        Lambda expr1 expr2 ->
+            Lambda expr1 (resolve exceptions frame expr2)
+
         _ ->
             expr

@@ -76,10 +76,13 @@ inc
 ### Lambda
 
 ```text
-> ((Lambda (x) (* x x)) 2)
+> ((lambda (x) (* x x)) 2)
 4
 
-> (map (Lambda (x) (* x x)) (list 1 2 3 4))
+> (map (lambda (x) (* x x)) (1 2 3 4))
+(1 4 9 16)
+
+> (map (lambda (x) (* x x)) (list 1 2 3 4))
 (1 4 9 16)
 ```
 
