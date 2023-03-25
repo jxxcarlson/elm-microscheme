@@ -133,6 +133,15 @@
 
 &gt; (cdr (quote (1 2 3)))
 (2 3)
+
+&gt; (null? ())
+True
+
+&gt; (null? (1))
+False
+
+&gt; (null? (cdr (1)))
+True
 </code></pre>
 <h3 id="define">Define</h3>
 <pre><code>&gt; (define x 3)
@@ -155,10 +164,13 @@ inc
 (2 3 4)
 </code></pre>
 <h3 id="lambda">Lambda</h3>
-<pre><code class="language-text">&gt; ((Lambda (x) (* x x)) 2)
+<pre><code class="language-text">&gt; ((lambda (x) (* x x)) 2)
 4
 
-&gt; (map (Lambda (x) (* x x)) (list 1 2 3 4))
+&gt; (map (lambda (x) (* x x)) (1 2 3 4))
+(1 4 9 16)
+
+&gt; (map (lambda (x) (* x x)) (list 1 2 3 4))
 (1 4 9 16)
 </code></pre>
 <h3 id="if">If</h3>
