@@ -107,5 +107,8 @@ resolve exceptions frame expr =
         L list ->
             L (List.map (resolve exceptions frame) list)
 
+        Define expr1 expr2 ->
+            Define expr1 (resolve exceptions frame expr2)
+
         _ ->
             expr
