@@ -78,7 +78,7 @@ evalResult env resultExpr =
                     Ok (L args)
 
                 L ((Sym "cons") :: a :: (L b) :: []) ->
-                    case ( eval env a |> Debug.log "AAA", eval env (L b |> Debug.log "BBB (1)") ) of
+                    case ( eval env a, eval env (L b) ) of
                         ( Ok aa, Ok (L inner) ) ->
                             Ok (L (aa :: inner))
 
@@ -93,19 +93,8 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 24 "Could not evaluate components of pair")
 
-                --L ((Sym "car") :: a :: b) ->
-                --
                 L ((Sym "car") :: args :: []) ->
-                    -- TODO: evaluate a?
-                    let
-                        _ =
-                            Debug.log "CAR: args" args
-
-                        value : Result EvalError Expr
-                        value =
-                            Debug.log "CAR: value" (eval env args)
-                    in
-                    case value of
+                    case eval env args of
                         Ok (Pair a _) ->
                             Ok a
 
@@ -116,16 +105,7 @@ evalResult env resultExpr =
                             Err (EvalError 33 "car: empty list")
 
                 L ((Sym "cdr") :: args :: []) ->
-                    -- TODO: evaluate a?
-                    let
-                        _ =
-                            Debug.log "CDR: args" args
-
-                        value : Result EvalError Expr
-                        value =
-                            Debug.log "CDR, value" (eval env args)
-                    in
-                    case value of
+                    case eval env args of
                         Ok (Pair _ b) ->
                             Ok b
 
@@ -135,8 +115,30 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 33 "cdr: empty list")
 
+                L [ Sym functionName, L expr_ ] ->
+                    case eval env (L expr_) of
+                        Ok evaluatedArg ->
+                            dispatchFunction env functionName [ evaluatedArg ]
+
+                        Err error ->
+                            Err (EvalError 37 (Debug.toString error))
+
                 L ((Sym functionName) :: args) ->
-                    dispatchFunction env functionName args
+                    let
+                        -- rawEvaluatedArgs : List (Result EvalError Expr)
+                        rawEvaluatedArgs : Result EvalError (List Expr)
+                        rawEvaluatedArgs =
+                            List.map (eval env) args |> Result.Extra.combine
+
+                        _ =
+                            Debug.log "rawEvaluatedArgs" rawEvaluatedArgs
+                    in
+                    case List.map (eval env) args |> Result.Extra.combine of
+                        Ok evaluatedArgs ->
+                            dispatchFunction env functionName evaluatedArgs
+
+                        Err error ->
+                            Err error
 
                 L [ Str "Lambda", L params, L body ] ->
                     Ok (L [ Lambda (L params) (L body) ])
