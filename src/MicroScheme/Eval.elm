@@ -33,6 +33,14 @@ evalResult env resultExpr =
 
         Ok expr ->
             case expr of
+                L [ Sym "null?", L args ] ->
+                    case eval env (L args) of
+                        Ok (L []) ->
+                            Ok (B True)
+
+                        _ ->
+                            Ok (B False)
+
                 Z n ->
                     Ok (Z n)
 

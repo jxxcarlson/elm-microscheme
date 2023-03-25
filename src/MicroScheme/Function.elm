@@ -32,7 +32,6 @@ functionDict =
         , ( ">=", gtePredicate )
         , ( "remainder", remainder )
         , ( "lookup", displayEnvironment )
-        , ( "null?", null )
         ]
 
 
@@ -139,15 +138,6 @@ gtePredicate exprs =
 
         _ ->
             Ok (B False)
-
-
-null : List Expr -> Result EvalError Expr
-null exprs =
-    if exprs == [] then
-        Ok (B True)
-
-    else
-        Ok (B False)
 
 
 equalNumbers : List Expr -> Result EvalError Expr

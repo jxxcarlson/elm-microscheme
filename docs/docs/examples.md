@@ -35,6 +35,15 @@
 
 > (cdr (quote (1 2 3)))
 (2 3)
+
+> (null? ())
+True
+
+> (null? (1))
+False
+
+> (null? (cdr (1)))
+True
 ```
 
 ### Define
