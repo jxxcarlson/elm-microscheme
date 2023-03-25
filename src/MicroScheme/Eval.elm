@@ -85,6 +85,8 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 24 "Could not evaluate components of pair")
 
+                --L ((Sym "car") :: a :: b) ->
+                --
                 L ((Sym "car") :: args :: []) ->
                     -- TODO: evaluate a?
                     let
@@ -96,6 +98,9 @@ evalResult env resultExpr =
                             Debug.log "CAR: value" (eval env args)
                     in
                     case value of
+                        Ok (Pair a _) ->
+                            Ok a
+
                         Ok (L (a :: rest)) ->
                             Ok a
 
@@ -113,6 +118,9 @@ evalResult env resultExpr =
                             Debug.log "CDR, value" (eval env args)
                     in
                     case value of
+                        Ok (Pair _ b) ->
+                            Ok b
+
                         Ok (L (a :: rest)) ->
                             Ok (L rest)
 
