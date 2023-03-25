@@ -22,6 +22,8 @@ functionDict =
     Dict.fromList
         [ ( "+", evalPlus )
         , ( "*", evalTimes )
+        , ( "-", evalMinus )
+        , ( "/", evalDivide )
         , ( "roundTo", roundTo )
         , ( "=", equalNumbers )
         , ( "<", ltPredicate )
@@ -30,6 +32,7 @@ functionDict =
         , ( ">=", gtePredicate )
         , ( "remainder", remainder )
         , ( "lookup", displayEnvironment )
+        , ( "null?", null )
         ]
 
 
@@ -46,6 +49,44 @@ remainder exprs =
 
         _ ->
             Err (EvalError 1 "bad arguments to: remainder")
+
+
+evalMinus : List Expr -> Result EvalError Expr
+evalMinus exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (Z (a - b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (F (a - b))
+
+        (F a) :: (Z b) :: [] ->
+            Ok (F (a - toFloat b))
+
+        (Z a) :: (F b) :: [] ->
+            Ok (F (toFloat a - b))
+
+        _ ->
+            Err (EvalError 81 "bad arguments to -")
+
+
+evalDivide : List Expr -> Result EvalError Expr
+evalDivide exprs =
+    case exprs of
+        (Z a) :: (Z b) :: [] ->
+            Ok (Z (a // b))
+
+        (F a) :: (F b) :: [] ->
+            Ok (F (a / b))
+
+        (F a) :: (Z b) :: [] ->
+            Ok (F (a / toFloat b))
+
+        (Z a) :: (F b) :: [] ->
+            Ok (F (toFloat a / b))
+
+        _ ->
+            Err (EvalError 81 "bad arguments to -")
 
 
 ltPredicate : List Expr -> Result EvalError Expr
@@ -98,6 +139,15 @@ gtePredicate exprs =
 
         _ ->
             Ok (B False)
+
+
+null : List Expr -> Result EvalError Expr
+null exprs =
+    if exprs == [] then
+        Ok (B True)
+
+    else
+        Ok (B False)
 
 
 equalNumbers : List Expr -> Result EvalError Expr
