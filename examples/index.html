@@ -162,6 +162,9 @@ inc
 
 &gt; (map inc (list 1 2 3))
 (2 3 4)
+
+&gt; (map inc (list 1 2 3 4))
+(2 3 4 5)
 </code></pre>
 <h3 id="lambda">Lambda</h3>
 <pre><code class="language-text">&gt; ((lambda (x) (* x x)) 2)
@@ -172,6 +175,9 @@ inc
 
 &gt; (map (lambda (x) (* x x)) (list 1 2 3 4))
 (1 4 9 16)
+
+&gt; (apply + (map (lambda (x) (* x x)) (list 1 2 3 4)))
+30
 </code></pre>
 <h3 id="if">If</h3>
 <pre><code class="language-text">&gt; (if (&lt; 0 1) A B)
