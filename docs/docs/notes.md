@@ -3,16 +3,16 @@
 ## Minimal Scheme
 
 ```lisp
-quote
-if
+x quote
+x if
 lambda
-define
+x define
 set!
 begin
-cons
-car
-cdr
-null?
+x cons
+x car
+x cdr
+x null?
 ```
 
 A somewhat longer list:
