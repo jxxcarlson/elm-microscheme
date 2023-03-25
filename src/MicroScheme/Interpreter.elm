@@ -91,7 +91,7 @@ step state =
     let
         parsed : Result (List DeadEnd) Expr
         parsed =
-            Parser.parse (Environment.root state.environment) state.input
+            Parser.parse state.input
                 |> Result.map (Frame.resolve [] (Environment.root state.environment))
                 |> (if state.debug then
                         Debug.log "  PARSE"
@@ -108,6 +108,8 @@ step state =
 
         Ok expr ->
             case expr of
+                --L ((Sym "eval") :: exprs) ->
+                --    { state | output = Debug.toString (Eval.eval state.environment (L exprs)) }
                 Sym "lookup" ->
                     { state | output = Debug.toString state.environment }
 
