@@ -1,7 +1,6 @@
 module ParserTest exposing (evalSuite, parserSuite)
 
 import Expect
-import MicroScheme.Environment as Environment
 import MicroScheme.Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame
 import MicroScheme.Init exposing (rootFrame)
@@ -41,7 +40,7 @@ parserSuite =
         , parseTest "(= 3 4)" (Ok (L [ Sym "=", Z 3, Z 4 ]))
         , parseTest "(define a 5)" (Ok (Define (Str "a") (Z 5)))
         , parseTest "(define (square x) (* x x))" (Ok (Define (L [ Str "square", Str "x" ]) (L [ Sym "*", Str "x", Str "x" ])))
-        , parseTest "(lambda (x y) (* x y))" (Ok (Lambda (L [ Str "x", Str "y" ]) (L [ Str "*", Str "x", Str "y" ])))
+        , parseTest "(lambda (x y) (* x y))" (Ok (Lambda (L [ Str "x", Str "y" ]) (L [ Sym "*", Str "x", Str "y" ])))
         , parseTest "(if (> a 0) 1 -1)" (Ok (If (L [ Str ">", Str "a", Z 0 ]) (Z 1) (Str "-1")))
         ]
 
