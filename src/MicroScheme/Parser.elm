@@ -30,6 +30,21 @@ parse str =
 --
 
 
+exprParser : P.Parser Expr
+exprParser =
+    P.oneOf
+        [ P.backtrackable pairParser
+        , lambdaParser
+        , defineParser
+        , ifParser
+        , P.lazy (\_ -> listParser)
+        , P.backtrackable intParser
+        , stringParser
+        , P.lazy (\_ -> defineParser)
+        , floatParser
+        ]
+
+
 pairParser : P.Parser Expr
 pairParser =
     P.succeed Pair
@@ -42,21 +57,6 @@ pairParser =
         |= P.lazy (\_ -> exprParser)
         |. P.spaces
         |. P.symbol ")"
-
-
-exprParser : P.Parser Expr
-exprParser =
-    P.oneOf
-        [ P.backtrackable pairParser
-        , lambdaParser
-        , defineParser
-        , ifParser
-        , P.lazy (\_ -> listParser)
-        , P.backtrackable intParser
-        , floatParser
-        , stringParser
-        , P.lazy (\_ -> defineParser)
-        ]
 
 
 ifParser : P.Parser Expr

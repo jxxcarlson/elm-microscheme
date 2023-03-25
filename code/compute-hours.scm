@@ -3,7 +3,8 @@
 (define (hours-from-hours-minutes h m) (roundTo 2 (+ h (/ m 60.0))))
 (define (hours-from-hours-minutes-pair pair) (hours-from-hours-minutes (car pair) (cdr pair)))
 (define (compute-hours hm-pairs) (map hours-from-hours-minutes-pair hm-pairs))
-(define (compute-earnings rate hm-pairs) (* rate (compute-hours hm-pairs)))
+(define (total-hours hours) (apply + (compute-hours hours)))
+(define (earnings rate hours) (* rate (total-hours hours)))
 
 (define (compute-hours-aux hm-pairs) (map hours-from-hours-minutes-pair hm-pairs))
 (define (round2 x) (roundTo 2 x))

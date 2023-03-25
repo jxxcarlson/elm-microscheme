@@ -6,6 +6,7 @@ import MicroScheme.Eval as Eval
 import MicroScheme.Expr as Expr exposing (Expr(..))
 import MicroScheme.Frame as Frame
 import MicroScheme.Help as Help
+import MicroScheme.Library as Library
 import MicroScheme.Parser as Parser
 import MicroScheme.Print as Print
 import MicroScheme.Utility as Utility
@@ -68,6 +69,11 @@ runProgram separator inputString =
     finalState.output
 
 
+runProgram_ : List String -> State -> State
+runProgram_ inputList state =
+    List.foldl (\str state_ -> state_ |> input str |> step) state inputList
+
+
 {-|
 
     > s1 = init "(define x 5)"
@@ -95,6 +101,21 @@ step state =
                 String.dropLeft 2 state.input
         in
         { state | output = exprString }
+
+    else if String.left 4 state.input == "run " then
+        let
+            inputList =
+                String.split ";;" (String.dropLeft 4 state.input)
+        in
+        runProgram_ inputList state
+
+    else if String.left 15 state.input == "lookup-program " then
+        case Library.lookup (String.dropLeft 15 state.input) of
+            Nothing ->
+                { state | output = "Sorry, no such program" }
+
+            Just program ->
+                runProgram_ (String.split ";;" program) state
 
     else
         let

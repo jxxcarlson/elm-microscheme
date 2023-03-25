@@ -138,6 +138,18 @@ isEven
 False
 ```
 
+### Running small programs
+
+```text
+> run (define a 2);; (define b 3);; (+ a b)
+5
+
+> lookup-program earnings
+earnings
+
+> (earnings 20 (list (cons 1 20) (cons 2 40)))
+80 ;; worked 1h 30m, 2h 40m at $20/hour
+```
 
 
 ## Function Dictionary
