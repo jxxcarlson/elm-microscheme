@@ -21,8 +21,8 @@ import Parser as P exposing ((|.), (|=))
     Ok (L [Sym "plus",Sym "x",Z 2])
 
 -}
-parse : Frame -> String -> Result (List P.DeadEnd) Expr
-parse frame str =
+parse : String -> Result (List P.DeadEnd) Expr
+parse str =
     P.run exprParser str
 
 
