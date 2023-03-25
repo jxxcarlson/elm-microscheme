@@ -27,6 +27,9 @@ a short session with the interpreter.
 ![Running Interpreter](https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7bb38caa-c314-48f0-6626-a90140b12c00/public
 )
 
+A good place to check whether microScheme is doing the
+right thing is [try.scheme.org](https://try.scheme.org/).
+I use it all the time to help correct my mistakes.
 
 ## Layout of the code
 

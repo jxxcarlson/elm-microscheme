@@ -115,14 +115,6 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 33 "cdr: empty list")
 
-                L [ Sym functionName, L expr_ ] ->
-                    case eval env (L expr_) of
-                        Ok evaluatedArg ->
-                            dispatchFunction env functionName [ evaluatedArg ]
-
-                        Err error ->
-                            Err (EvalError 37 (Debug.toString error))
-
                 L ((Sym functionName) :: args) ->
                     let
                         -- rawEvaluatedArgs : List (Result EvalError Expr)
