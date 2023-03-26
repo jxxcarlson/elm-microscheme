@@ -65,6 +65,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#environment">Environment</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-small-programs">Running small programs</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#function-dictionary">Function Dictionary</a>
@@ -104,8 +106,11 @@
                 <h1 id="examples">Examples</h1>
 <h2 id="scheme">Scheme</h2>
 <h3 id="constructors-and-destructors">Constructors and destructors</h3>
-<pre><code class="language-text">&gt; (cons 4 5)
-(4 . 5)
+<pre><code class="language-text">&gt; (cons 1 2)
+(1. 52)
+
+&gt; (cons 1 (list 2 3))
+(1 2 3)
 
 &gt; (cons 1 (quote (2 3)))
 (1 2 3)
@@ -118,9 +123,6 @@
 
 &gt; (list 1 2 3)
 (1 2 3)
-
-&gt; (cons 0 (list 1 2 3))
-(0 1 2 3)
 
 &gt; (car (list 1 2 3))
 1
@@ -142,6 +144,12 @@ False
 
 &gt; (null? (cdr (1)))
 True
+
+&gt; (atom? 1)
+True
+
+&gt; (atom? (list 1 2 3))
+False
 </code></pre>
 <h3 id="define">Define</h3>
 <pre><code>&gt; (define x 3)
@@ -211,6 +219,16 @@ isEven
 
 &gt; (isEven 17)
 False
+</code></pre>
+<h3 id="running-small-programs">Running small programs</h3>
+<pre><code class="language-text">&gt; run (define a 2);; (define b 3);; (+ a b)
+5
+
+&gt; lookup-program earnings
+earnings
+
+&gt; (earnings 20 (list (cons 1 20) (cons 2 40)))
+80 ;; worked 1h 30m, 2h 40m at $20/hour
 </code></pre>
 <h2 id="function-dictionary">Function Dictionary</h2>
 <pre><code class="language-elm">functionDict : Dict String (List Expr -&gt; Result EvalError Expr)
