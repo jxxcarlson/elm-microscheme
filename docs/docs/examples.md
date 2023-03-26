@@ -150,12 +150,20 @@ False
 > run (define a 2);; (define b 3);; (+ a b)
 5
 
-> lookup-program earnings
-earnings
+> lookup-program earnings-totals
+earnings-totals
+; earnings-totals is defined in module Microscheme.Library
 
-> (earnings 20 (list (cons 1 20) (cons 2 40)))
-80 ;; worked 1h 30m, 2h 40m at $20/hour
+> my-hours
+((Sym "cons" 1 20) (Sym "cons" 2 40) (Sym "cons" 1 14))
+; 1h 20m, 2h 40m, 1h 14m
+
+> (earnings-totals 20 my-hours)
+(5.23 . 104.6)
+
+; 5.23h at $20/h = $104.60
 ```
+
 
 
 ## Function Dictionary

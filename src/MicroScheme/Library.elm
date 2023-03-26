@@ -10,7 +10,7 @@ earningsTotals =
     , "(define (compute-hours hm-pairs) (map hours-from-hours-minutes-pair hm-pairs))"
     , "(define (total-hours hours) (apply + (compute-hours hours)))"
     , "(define (total-earnings rate hours) (* rate (total-hours hours)))"
-    , "(define (earnings-totals rate hours) (cons (total-earnings rate hours) (total-hours hours)))"
+    , "(define (earnings-totals rate hours) (cons (total-hours hours) (roundTo 2 (total-earnings rate hours)) ))"
     ]
         |> String.join ";; "
 
