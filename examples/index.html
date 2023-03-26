@@ -224,11 +224,18 @@ False
 <pre><code class="language-text">&gt; run (define a 2);; (define b 3);; (+ a b)
 5
 
-&gt; lookup-program earnings
-earnings
+&gt; lookup-program earnings-totals
+earnings-totals
+; earnings-totals is defined in module Microscheme.Library
 
-&gt; (earnings 20 (list (cons 1 20) (cons 2 40)))
-80 ;; worked 1h 30m, 2h 40m at $20/hour
+&gt; my-hours
+((Sym &quot;cons&quot; 1 20) (Sym &quot;cons&quot; 2 40) (Sym &quot;cons&quot; 1 14))
+; 1h 20m, 2h 40m, 1h 14m
+
+&gt; (earnings-totals 20 my-hours)
+(5.23 . 104.6)
+
+; 5.23h at $20/h = $104.60
 </code></pre>
 <h2 id="function-dictionary">Function Dictionary</h2>
 <pre><code class="language-elm">functionDict : Dict String (List Expr -&gt; Result EvalError Expr)
