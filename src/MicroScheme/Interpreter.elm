@@ -199,7 +199,6 @@ step state =
                     _ ->
                         case Eval.eval state.environment expr of
                             Err error ->
-                                -- { state | output = "error (17): could not evaluate expr (" ++ Expr.print expr ++ ")  -- " ++ Debug.toString expr }
                                 { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Debug.toString expr }
 
                             Ok value ->
