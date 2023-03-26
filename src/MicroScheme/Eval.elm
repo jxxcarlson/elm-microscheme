@@ -53,7 +53,7 @@ evalResult env resultExpr =
                 Sym s ->
                     Ok (Sym s)
 
-                L [ Sym "atom?", L args ] ->
+                L [ Sym "atom?", L _ ] ->
                     Ok (B False)
 
                 L [ Sym "atom?", _ ] ->
@@ -83,15 +83,21 @@ evalResult env resultExpr =
                 L ((Sym "list") :: args) ->
                     Ok (L args)
 
-                L ((Sym "cons") :: a :: (L b) :: []) ->
+                L [ Sym "cons", a, L b ] ->
+                    -- L [Sym "cons",Z 7,L [Sym "+",Z 1,Z 2,Z 3]]
                     case ( eval env a, eval env (L b) ) of
-                        ( Ok aa, Ok (L inner) ) ->
-                            Ok (L (aa :: inner))
+                        ( Ok aa, Ok bb ) ->
+                            case bb of
+                                L bb_ ->
+                                    Ok (L (aa :: bb_))
+
+                                _ ->
+                                    Ok (Pair aa bb)
 
                         _ ->
                             Err (EvalError 23 "Could not evaluate components of cons")
 
-                L ((Sym "cons") :: a :: b :: []) ->
+                L [ Sym "cons", a, b ] ->
                     case ( eval env a, eval env b ) of
                         ( Ok aa, Ok bb ) ->
                             Ok (Pair aa bb)
@@ -104,7 +110,7 @@ evalResult env resultExpr =
                         Ok (Pair a _) ->
                             Ok a
 
-                        Ok (L (a :: rest)) ->
+                        Ok (L (a :: _)) ->
                             Ok a
 
                         _ ->

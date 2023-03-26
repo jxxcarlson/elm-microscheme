@@ -6,8 +6,11 @@
 ### Constructors and destructors
 
 ```text
-> (cons 4 5)
-(4 . 5)
+> (cons 1 2)
+(1. 52)
+
+> (cons 1 (list 2 3))
+(1 2 3)
 
 > (cons 1 (quote (2 3)))
 (1 2 3)
@@ -20,9 +23,6 @@
 
 > (list 1 2 3)
 (1 2 3)
-
-> (cons 0 (list 1 2 3))
-(0 1 2 3)
 
 > (car (list 1 2 3))
 1
