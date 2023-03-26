@@ -28,6 +28,7 @@ symbolStrings =
     , "help"
     , "debug"
     , "null?"
+    , "atom?"
     , "apply"
 
     -- , "eval"

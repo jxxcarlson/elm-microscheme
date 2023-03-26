@@ -53,6 +53,12 @@ evalResult env resultExpr =
                 Sym s ->
                     Ok (Sym s)
 
+                L [ Sym "atom?", L args ] ->
+                    Ok (B False)
+
+                L [ Sym "atom?", _ ] ->
+                    Ok (B True)
+
                 L ((Sym "quote") :: arg :: []) ->
                     Ok arg
 
