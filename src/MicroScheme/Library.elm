@@ -11,7 +11,7 @@ accountingProgram =
     , "(define (total-hours hours) (apply + (compute-hours hours)))"
     , "(define (earnings rate hours) (* rate (total-hours hours)))"
 
-    --, "(define (earnings-hours rate hours) (cons (earnings rate hours) (total-hours hours))"
+    --, "(define (earnings-hours rate hours) (cons (earnings rate hours) (total-hours hours)))"
     ]
         |> String.join ";; "
 
