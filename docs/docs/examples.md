@@ -44,6 +44,12 @@ False
 
 > (null? (cdr (1)))
 True
+
+> (atom? 1)
+True
+
+> (atom? (list 1 2 3))
+False
 ```
 
 ### Define
