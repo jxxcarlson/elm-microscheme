@@ -138,6 +138,9 @@ evalResult env resultExpr =
                         _ ->
                             evalCdr env args
 
+                L ((Sym "equal?") :: a :: b :: []) ->
+                    Ok (B (a == b))
+
                 L [ Sym "apply", Sym functionName, L args ] ->
                     case eval env (L args) of
                         Ok (L realArgs) ->

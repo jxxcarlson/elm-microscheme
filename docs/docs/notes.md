@@ -5,7 +5,7 @@
 ```lisp
 x quote
 x if
-lambda
+x lambda
 x define
 set!
 begin
@@ -18,11 +18,11 @@ x null?
 A somewhat longer list:
 
 ```lisp
-lambda - Defines a new anonymous procedure.
+x lambda - Defines a new anonymous procedure.
 
-define - Defines a named procedure or value.
+x define - Defines a named procedure or value.
 
-if - Conditional expression that evaluates one of two expressions based on a condition.
+x if - Conditional expression that evaluates one of two expressions based on a condition.
 
 let - Defines a new variable within a local scope.
 
@@ -34,23 +34,23 @@ set! - Assigns a new value to an existing variable.
 
 begin - Evaluates a sequence of expressions in order and returns the result of the last expression.
 
-quote - Returns a given expression without evaluating it.
+x quote - Returns a given expression without evaluating it.
 
-list - Constructs a list of its arguments.
+x list - Constructs a list of its arguments.
 
-cons - Constructs a new pair.
+x cons - Constructs a new pair.
 
-car - Returns the first element of a pair.
+x car - Returns the first element of a pair.
 
-cdr - Returns the second element of a pair.
+x cdr - Returns the second element of a pair.
 
-null? - Returns #t if the argument is the empty list.
+x null? - Returns #t if the argument is the empty list.
 
 eq? - Returns #t if two arguments are the same object in memory.
 
 equal? - Returns #t if two arguments are structurally equivalent.
 
-map - Applies a given procedure to each element of a list and returns a new list of the results.
+x map - Applies a given procedure to each element of a list and returns a new list of the results.
 
 fold (also known as reduce) - Applies a given procedure to a list, starting with an initial value, and accumulates the results.
 
@@ -64,5 +64,5 @@ or - Evaluates a sequence of expressions and returns #t if any of them evaluate 
 
 not - Returns the logical negation of its argument.
 
-apply - Calls a procedure with a list of arguments
+x apply - Calls a procedure with a list of arguments
 ```

@@ -105,6 +105,22 @@ inc
 A
 ```
 
+### equal? 
+
+```text
+> (define a 1)
+a
+> (define b 1)
+b
+> (equal? a b)
+True
+> (define c 2)
+c
+> (equal? a c)
+False
+```
+
+
 ### Environment
 
 You can look up values in the environment:

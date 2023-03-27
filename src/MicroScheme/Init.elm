@@ -30,6 +30,7 @@ symbolStrings =
     , "null?"
     , "atom?"
     , "apply"
+    , "equal?"
 
     -- , "eval"
     ]
