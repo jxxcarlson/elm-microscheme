@@ -9,11 +9,12 @@ module MicroScheme.Frame exposing
     , empty
     , resolve
     , varNames
-    )
+    , print
+   )
 
 import Dict exposing (Dict)
 import Maybe.Extra
-import MicroScheme.Expr exposing (Expr(..))
+import MicroScheme.Expr as Expr exposing (Expr(..))
 
 
 type alias Frame =
@@ -115,3 +116,16 @@ resolve exceptions frame expr =
 
         _ ->
             expr
+
+
+
+print : Frame -> String
+print frame =
+    List.foldl (\binding acc -> acc ++ printBinding binding) "" (frame.bindings |> Dict.toList |> List.sortBy (\(name, value) -> name))
+      |> (\str -> "Root frame\n------------\n" ++ str)
+
+
+printBinding : (String, Expr) -> String
+printBinding (key, expr)= "(" ++ key ++ ", " ++ Expr.print expr ++ ")\n"
+
+
