@@ -60,10 +60,10 @@ evalResult env resultExpr =
                     Ok (B True)
 
                 L ((Sym "quote") :: arg :: []) ->
-                    Ok arg
+                    Ok (Quote arg) |> Debug.log "QUOTE (1)"
 
                 L ((Sym "quote") :: args) ->
-                    Ok (L args)
+                    Ok (Quote (L args)) |> Debug.log "QUOTE (2)"
 
                 L ((Sym "map") :: lambda :: args) ->
                     let
@@ -84,15 +84,20 @@ evalResult env resultExpr =
                     Ok (L args)
 
                 L [ Sym "cons", a, L b ] ->
-                    -- L [Sym "cons",Z 7,L [Sym "+",Z 1,Z 2,Z 3]]
                     case ( eval env a, eval env (L b) ) of
                         ( Ok aa, Ok bb ) ->
                             case bb of
                                 L bb_ ->
-                                    Ok (L (aa :: bb_))
+                                    Ok (L (aa :: bb_)) |> Debug.log "CONs (1)"
+
+                                Quote (L bbb_) ->
+                                    Ok (L (aa :: bbb_))
+
+                                Quote bbb_ ->
+                                    Ok (Pair aa bbb_)
 
                                 _ ->
-                                    Ok (Pair aa bb)
+                                    Ok (Pair aa bb) |> Debug.log "CONs (2)"
 
                         _ ->
                             Err (EvalError 23 "Could not evaluate components of cons")
@@ -100,7 +105,15 @@ evalResult env resultExpr =
                 L [ Sym "cons", a, b ] ->
                     case ( eval env a, eval env b ) of
                         ( Ok aa, Ok bb ) ->
-                            Ok (Pair aa bb)
+                            case bb of
+                                Quote (L bbb) ->
+                                    Ok (L (aa :: bbb)) |> Debug.log "CONs (3)"
+
+                                Quote bbb ->
+                                    Ok (Pair aa bbb) |> Debug.log "CONs (4)"
+
+                                _ ->
+                                    Ok (Pair aa bb) |> Debug.log "CONs (5)"
 
                         _ ->
                             Err (EvalError 24 "Could not evaluate components of pair")
@@ -146,12 +159,6 @@ evalResult env resultExpr =
                         Err error ->
                             Err error
 
-                L [ Str "Lambda", L params, L body ] ->
-                    Ok (L [ Lambda (L params) (L body) ])
-
-                L ((L [ Str "Lambda", L params, L body ]) :: args) ->
-                    evalResult env (applyLambdaToExpressionList params body args)
-
                 L ((Lambda (L params) (L body)) :: args) ->
                     evalResult env (applyLambdaToExpressionList params body args)
 
@@ -160,6 +167,9 @@ evalResult env resultExpr =
 
                 If (L boolExpr_) expr1 expr2 ->
                     evalBoolExpr env boolExpr_ expr1 expr2
+
+                Quote expr_ ->
+                    Ok (Quote expr_)
 
                 L ((Str name) :: rest) ->
                     Err <| EvalError 0 ("Unknown symbol: " ++ name)

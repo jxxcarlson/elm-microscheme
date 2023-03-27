@@ -5,6 +5,7 @@ theme: readthedocs
 nav:
   - Home: 'index.md'
   - Overview: 'overview.md'
+  - Progress : 'list.md'
   - Examples: 'examples.md'
   - Notes: 'notes.md'
 

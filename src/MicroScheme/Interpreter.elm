@@ -138,68 +138,88 @@ step state =
 
             Ok expr ->
                 case expr of
-                    Sym "lookup" ->
+                    Sym "env" ->
                         { state | output = Debug.toString state.environment }
 
                     Sym "debug" ->
-                        let
-                            newDebug =
-                                not state.debug
-                        in
-                        { state
-                            | debug = newDebug
-                            , output =
-                                if newDebug then
-                                    "  true"
-
-                                else
-                                    "  false"
-                        }
+                        handleDebug state
 
                     Sym "help" ->
                         { state | output = Help.text }
 
                     Define (Str name) value ->
-                        { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+                        handleDefine1 state name value
 
                     Define (L ((Str name) :: args)) (L body) ->
-                        let
-                            argStrings : List String
-                            argStrings =
-                                let
-                                    mapper : Expr -> Maybe String
-                                    mapper expr_ =
-                                        case expr_ of
-                                            Str s ->
-                                                Just s
-
-                                            _ ->
-                                                Nothing
-                                in
-                                List.map mapper args |> Maybe.Extra.values
-
-                            newBody : List Expr
-                            newBody =
-                                List.map (Frame.resolve argStrings (Environment.root state.environment)) body
-
-                            value : Expr
-                            value =
-                                Lambda (L args) (L newBody)
-                        in
-                        { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+                        handleDefine2 state name args body
 
                     Define (L ((Str name) :: args)) body ->
-                        let
-                            value : Expr
-                            value =
-                                Lambda (L args) body
-                        in
-                        { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+                        handleDefine3 state name args body
 
                     _ ->
-                        case Eval.eval state.environment expr of
-                            Err error ->
-                                { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Debug.toString expr }
+                        handleMissingCase state expr
 
-                            Ok value ->
-                                { state | output = Print.print value }
+
+handleDebug state =
+    let
+        newDebug =
+            not state.debug
+    in
+    { state
+        | debug = newDebug
+        , output =
+            if newDebug then
+                "  true"
+
+            else
+                "  false"
+    }
+
+
+handleDefine1 state name value =
+    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+
+
+handleDefine2 state name args body =
+    let
+        argStrings : List String
+        argStrings =
+            let
+                mapper : Expr -> Maybe String
+                mapper expr_ =
+                    case expr_ of
+                        Str s ->
+                            Just s
+
+                        _ ->
+                            Nothing
+            in
+            List.map mapper args |> Maybe.Extra.values
+
+        newBody : List Expr
+        newBody =
+            List.map (Frame.resolve argStrings (Environment.root state.environment)) body
+
+        value : Expr
+        value =
+            Lambda (L args) (L newBody)
+    in
+    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+
+
+handleDefine3 state name args body =
+    let
+        value : Expr
+        value =
+            Lambda (L args) body
+    in
+    { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
+
+
+handleMissingCase state expr =
+    case Eval.eval state.environment expr of
+        Err error ->
+            { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Debug.toString expr }
+
+        Ok value ->
+            { state | output = Print.print value }

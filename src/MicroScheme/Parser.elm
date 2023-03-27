@@ -33,7 +33,8 @@ parse str =
 exprParser : P.Parser Expr
 exprParser =
     P.oneOf
-        [ P.backtrackable pairParser
+        [ quotedExpression
+        , P.backtrackable pairParser
         , lambdaParser
         , defineParser
         , ifParser
@@ -43,6 +44,13 @@ exprParser =
         , P.lazy (\_ -> defineParser)
         , floatParser
         ]
+
+
+quotedExpression : P.Parser Expr
+quotedExpression =
+    P.succeed Quote
+        |. P.symbol "'"
+        |= P.lazy (\_ -> exprParser)
 
 
 pairParser : P.Parser Expr
