@@ -1,4 +1,4 @@
-module MicroScheme.Help exposing (lookup)
+module MicroScheme.Help exposing (lookup, text)
 
 
 
@@ -33,35 +33,11 @@ text =
     > (square 3)
     9
 
-    ===========================
-    
-    Environment
-    -----------
-    
-    > (lookup square) -- lookup 'square' in the environment
-    [Lambda (L [Str "x"]) (L [Sym "*",Str "x",Str "x"])]
+    > env ; print the environment
+    > env square ; lookup square in the environment
+    (lambda (x) (Sym "*" x x)
 
-    > lookup
-    -- display the environment
-    ===========================
-    
-    Debug
-    -----
-    
-    > (+ 1 2)
-    3
-    > debug
-      true
-    > (+ 1 2)
-    PARSE: Ok (L [Sym "+",Z 1,Z 2])
-    3
-    > debug
-    PARSE: Ok (Sym "debug")
-    false
-    > (+ 1 2)
-    3
-    
-    > 
-    
-    
+    > info cons
+    (cons 1 2) => (1 . 2); (cons 1 '(2 3)' => (1 2 3)
+
 """

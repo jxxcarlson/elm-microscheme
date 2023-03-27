@@ -39,4 +39,4 @@ display expr =
             display expr_
 
         u ->
-            "I don't know how to display that expression: " ++ Debug.toString expr
+            "I don't know how to display that expression: "

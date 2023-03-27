@@ -1,5 +1,6 @@
 module MicroScheme.Interpreter exposing (State, init, input, runProgram, step)
 
+import Dict
 import Maybe.Extra
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
@@ -66,7 +67,7 @@ doStep state =
                 Parser.parse state.input
                     |> Result.map (Frame.resolve [] (Environment.root state.environment))
                     |> (if state.debug then
-                            Debug.log "  PARSE:: "
+                            identity --Debug.log "  PARSE:: "
 
                         else
                             identity
@@ -120,24 +121,40 @@ isCommand state =
     let
         maybeCommand = state.input |> String.words |> List.head
     in
-    case maybeCommand of
+    (case maybeCommand of
         Nothing -> (False, 0)
         Just command ->
-            (List.member command commandNames, String.length command)
+            (List.member command commandNames, String.length command))
 
-commandNames = ["info", "run", "lookup-program"]
+commandNames = ["help", "info", "env", "run", "lookup", "lookup-program"]
 
 
 handleCommand state commandSize =
   let
       cmdSize = commandSize + 1
   in
-  if String.left cmdSize state.input == "Ok" then
+     if String.left cmdSize state.input == "Ok" then
          let
              exprString =
                  String.dropLeft cmdSize state.input
          in
          { state | output = exprString }
+
+
+     else if String.left cmdSize state.input == "env " then
+        let
+          symbol = String.dropLeft cmdSize state.input
+          value = case Dict.get symbol (Environment.root state.environment |> .bindings) of
+                Nothing -> "Unknown symbol"
+                Just expr -> Expr.print expr
+        in
+              { state | output = value }
+
+     else if String.left commandSize state.input == "env" then
+         { state | output = Frame.print (Environment.root state.environment) }
+
+     else if  String.left commandSize state.input == "help" then
+                     { state | output = Help.text}
 
      else if String.left cmdSize state.input == "info " then
         { state | output = Help.lookup (String.dropLeft cmdSize state.input)}
@@ -201,7 +218,7 @@ handleDefine3 state name args body =
 handleMissingCase state expr =
     case Eval.eval state.environment expr of
         Err error ->
-            { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Debug.toString expr }
+            { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Expr.print expr }
 
         Ok value ->
             { state | output = Expr.print value }

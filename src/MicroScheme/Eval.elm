@@ -60,10 +60,10 @@ evalResult env resultExpr =
                     Ok (B True)
 
                 L ((Sym "quote") :: arg :: []) ->
-                    Ok (Quote arg) |> Debug.log "QUOTE (1)"
+                    Ok (Quote arg)
 
                 L ((Sym "quote") :: args) ->
-                    Ok (Quote (L args)) |> Debug.log "QUOTE (2)"
+                    Ok (Quote (L args))
 
                 L ((Sym "map") :: lambda :: args) ->
                     let
@@ -88,7 +88,7 @@ evalResult env resultExpr =
                         ( Ok aa, Ok bb ) ->
                             case bb of
                                 L bb_ ->
-                                    Ok (L (aa :: bb_)) |> Debug.log "CONs (1)"
+                                    Ok (L (aa :: bb_))
 
                                 Quote (L bbb_) ->
                                     Ok (L (aa :: bbb_))
@@ -97,7 +97,7 @@ evalResult env resultExpr =
                                     Ok (Pair aa bbb_)
 
                                 _ ->
-                                    Ok (Pair aa bb) |> Debug.log "CONs (2)"
+                                    Ok (Pair aa bb)
 
                         _ ->
                             Err (EvalError 23 "Could not evaluate components of cons")
@@ -107,28 +107,25 @@ evalResult env resultExpr =
                         ( Ok aa, Ok bb ) ->
                             case bb of
                                 Quote (L bbb) ->
-                                    Ok (L (aa :: bbb)) |> Debug.log "CONs (3)"
+                                    Ok (L (aa :: bbb))
 
                                 Quote bbb ->
-                                    Ok (Pair aa bbb) |> Debug.log "CONs (4)"
+                                    Ok (Pair aa bbb)
 
                                 _ ->
-                                    Ok (Pair aa bb) |> Debug.log "CONs (5)"
+                                    Ok (Pair aa bb)
 
                         _ ->
                             Err (EvalError 24 "Could not evaluate components of pair")
 
                 L ((Sym "car") :: arg :: []) ->
-                    let
-                        _ =
-                            Debug.log "car (ARG)" arg
-                    in
+
                     case eval env arg of
                         Ok (Quote arg2) ->
-                            evalCar env arg2 |> Debug.log "CAR (2)"
+                            evalCar env arg2
 
                         _ ->
-                            evalCar env arg |> Debug.log "CAR (3)"
+                            evalCar env arg
 
                 L ((Sym "cdr") :: args :: []) ->
                     case eval env args of
@@ -189,10 +186,6 @@ evalResult env resultExpr =
 
 dispatchFunction : Environment -> String -> List Expr -> Result EvalError Expr
 dispatchFunction env functionName args =
-    if functionName == "lookup" then
-        Ok (Display args)
-
-    else
         case Function.dispatch functionName of
             Err _ ->
                 Err (EvalError 3 ("dispatch " ++ functionName ++ " did not return a value"))
