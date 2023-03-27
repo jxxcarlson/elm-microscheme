@@ -118,27 +118,25 @@ evalResult env resultExpr =
                         _ ->
                             Err (EvalError 24 "Could not evaluate components of pair")
 
-                L ((Sym "car") :: args :: []) ->
-                    case eval env args of
-                        Ok (Pair a _) ->
-                            Ok a
-
-                        Ok (L (a :: _)) ->
-                            Ok a
+                L ((Sym "car") :: arg :: []) ->
+                    let
+                        _ =
+                            Debug.log "car (ARG)" arg
+                    in
+                    case eval env arg of
+                        Ok (Quote arg2) ->
+                            evalCar env arg2 |> Debug.log "CAR (2)"
 
                         _ ->
-                            Err (EvalError 33 "car: empty list")
+                            evalCar env arg |> Debug.log "CAR (3)"
 
                 L ((Sym "cdr") :: args :: []) ->
                     case eval env args of
-                        Ok (Pair _ b) ->
-                            Ok b
-
-                        Ok (L (a :: rest)) ->
-                            Ok (L rest)
+                        Ok (Quote args2) ->
+                            evalCdr env args2
 
                         _ ->
-                            Err (EvalError 33 "cdr: empty list")
+                            evalCdr env args
 
                 L [ Sym "apply", Sym functionName, L args ] ->
                     case eval env (L args) of
@@ -275,3 +273,29 @@ applyLambdaToExpressionList params body args =
 
         Ok frame ->
             Ok (List.map (Frame.resolve [] frame) body |> L)
+
+
+evalCar : Environment -> Expr -> Result EvalError Expr
+evalCar env args =
+    case eval env args of
+        Ok (Pair a _) ->
+            Ok a
+
+        Ok (L (a :: _)) ->
+            Ok a
+
+        _ ->
+            Err (EvalError 33 "car: empty list")
+
+
+evalCdr : Environment -> Expr -> Result EvalError Expr
+evalCdr env args =
+    case eval env args of
+        Ok (Pair _ b) ->
+            Ok b
+
+        Ok (L (a :: rest)) ->
+            Ok (L rest)
+
+        _ ->
+            Err (EvalError 33 "cdr: empty list")
