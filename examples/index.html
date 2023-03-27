@@ -67,6 +67,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#if">If</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#equal">equal?</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#environment">Environment</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#running-small-programs">Running small programs</a>
@@ -194,6 +196,18 @@ inc
 <h3 id="if">If</h3>
 <pre><code class="language-text">&gt; (if (&lt; 0 1) A B)
 A
+</code></pre>
+<h3 id="equal">equal?</h3>
+<pre><code class="language-text">&gt; (define a 1)
+a
+&gt; (define b 1)
+b
+&gt; (equal? a b)
+True
+&gt; (define c 2)
+c
+&gt; (equal? a c)
+False
 </code></pre>
 <h3 id="environment">Environment</h3>
 <p>You can look up values in the environment:</p>
