@@ -33,44 +33,6 @@ input str state =
     { state | input = String.trim str }
 
 
-{-|
-
-    TODO: BUG
-    > (define (isEven x ) ((remainder x 2 ) = 0 ) )
-    ENV: Zipper { after = [], before = [], crumbs = [], focus = Tree { bindings = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("<",Sym "<"),("<=",Sym "<="),("=",Sym "="),(">",Sym ">"),(">=",Sym ">="),("isEven",L [SF Lambda,L [Str "x"],L [L [Sym "remainder",Str "x",Z 2],Sym "=",Z 0]]),("remainder",Sym "remainder"),("roundTo",Sym "roundTo"),("square",L [SF Lambda,L [Str "x"],L [Sym "*",Str "x",Str "x"]])], id = 0 } [] }
-    isEven
-    > (isEven 2)
-    EvalError 0 "Missing case (eval)"
-
-    > runProgram ";" "(define x 5); (* 5 5)"
-    "25"
-
-    > runProgram "\n" "(define x 5)\n (* 5 5)"
-    "25"
-
--}
-runProgram : String -> String -> String
-runProgram separator inputString =
-    let
-        inputList : List String
-        inputList =
-            inputString |> String.split separator |> List.map String.trim
-
-        initialState : State
-        initialState =
-            init ""
-
-        finalState : State
-        finalState =
-            List.foldl (\str state_ -> state_ |> input str |> step) initialState inputList
-    in
-    finalState.output
-
-
-runProgram_ : List String -> State -> State
-runProgram_ inputList state =
-    List.foldl (\str state_ -> state_ |> input str |> step) state inputList
-
 
 {-|
 
@@ -93,32 +55,11 @@ runProgram_ inputList state =
 -}
 step : State -> State
 step state =
-    if String.left 2 state.input == "Ok" then
-        let
-            exprString =
-                String.dropLeft 2 state.input
-        in
-        { state | output = exprString }
+    case isCommand state of
+        (True, commandLength) -> handleCommand state commandLength
+        (False, _) -> doStep state
 
-    else if String.left 5 state.input == "help " then
-       { state | output = Help.lookup (String.dropLeft 5 state.input)}
-
-    else if String.left 4 state.input == "run " then
-        let
-            inputList =
-                String.split ";;" (String.dropLeft 4 state.input)
-        in
-        runProgram_ inputList state
-
-    else if String.left 15 state.input == "lookup-program " then
-        case Library.lookup (String.dropLeft 15 state.input) of
-            Nothing ->
-                { state | output = "Sorry, no such program" }
-
-            Just program ->
-                runProgram_ (String.split ";;" program) state
-
-    else
+doStep state =
         let
             parsed : Result (List DeadEnd) Expr
             parsed =
@@ -174,6 +115,49 @@ handleDebug state =
     }
 
 
+isCommand : State -> (Bool, Int)
+isCommand state =
+    let
+        maybeCommand = state.input |> String.words |> List.head
+    in
+    case maybeCommand of
+        Nothing -> (False, 0)
+        Just command ->
+            (List.member command commandNames, String.length command)
+
+commandNames = ["info", "run", "lookup-program"]
+
+
+handleCommand state commandSize =
+  let
+      cmdSize = commandSize + 1
+  in
+  if String.left cmdSize state.input == "Ok" then
+         let
+             exprString =
+                 String.dropLeft cmdSize state.input
+         in
+         { state | output = exprString }
+
+     else if String.left cmdSize state.input == "info " then
+        { state | output = Help.lookup (String.dropLeft cmdSize state.input)}
+
+     else if String.left cmdSize state.input == "run " then
+         let
+             inputList =
+                 String.split ";;" (String.dropLeft cmdSize state.input)
+         in
+         runProgram_ inputList state
+
+     else if String.left cmdSize state.input == "lookup-program " then
+         case Library.lookup (String.dropLeft cmdSize state.input) of
+             Nothing ->
+                 { state | output = "Sorry, no such program" }
+
+             Just program ->
+                 runProgram_ (String.split ";;" program) state
+     else state
+
 handleDefine1 state name value =
     { state | environment = Environment.addSymbolToRoot name value state.environment, output = name }
 
@@ -222,3 +206,41 @@ handleMissingCase state expr =
         Ok value ->
             { state | output = Expr.print value }
 
+
+{-|
+
+    TODO: BUG
+    > (define (isEven x ) ((remainder x 2 ) = 0 ) )
+    ENV: Zipper { after = [], before = [], crumbs = [], focus = Tree { bindings = Dict.fromList [("*",Sym "*"),("+",Sym "+"),("<",Sym "<"),("<=",Sym "<="),("=",Sym "="),(">",Sym ">"),(">=",Sym ">="),("isEven",L [SF Lambda,L [Str "x"],L [L [Sym "remainder",Str "x",Z 2],Sym "=",Z 0]]),("remainder",Sym "remainder"),("roundTo",Sym "roundTo"),("square",L [SF Lambda,L [Str "x"],L [Sym "*",Str "x",Str "x"]])], id = 0 } [] }
+    isEven
+    > (isEven 2)
+    EvalError 0 "Missing case (eval)"
+
+    > runProgram ";" "(define x 5); (* 5 5)"
+    "25"
+
+    > runProgram "\n" "(define x 5)\n (* 5 5)"
+    "25"
+
+-}
+runProgram : String -> String -> String
+runProgram separator inputString =
+    let
+        inputList : List String
+        inputList =
+            inputString |> String.split separator |> List.map String.trim
+
+        initialState : State
+        initialState =
+            init ""
+
+        finalState : State
+        finalState =
+            List.foldl (\str state_ -> state_ |> input str |> step) initialState inputList
+    in
+    finalState.output
+
+
+runProgram_ : List String -> State -> State
+runProgram_ inputList state =
+    List.foldl (\str state_ -> state_ |> input str |> step) state inputList
