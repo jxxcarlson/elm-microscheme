@@ -4,12 +4,10 @@ import Maybe.Extra
 import MicroScheme.Environment as Environment exposing (Environment)
 import MicroScheme.Eval as Eval
 import MicroScheme.Expr as Expr exposing (Expr(..))
-import MicroScheme.Frame as Frame
+import MicroScheme.Frame as Frame exposing (Frame)
 import MicroScheme.Help as Help
 import MicroScheme.Library as Library
 import MicroScheme.Parser as Parser
-import MicroScheme.Print as Print
-import MicroScheme.Utility as Utility
 import Parser exposing (DeadEnd)
 
 
@@ -102,6 +100,9 @@ step state =
         in
         { state | output = exprString }
 
+    else if String.left 5 state.input == "help " then
+       { state | output = Help.lookup (String.dropLeft 5 state.input)}
+
     else if String.left 4 state.input == "run " then
         let
             inputList =
@@ -139,13 +140,10 @@ step state =
             Ok expr ->
                 case expr of
                     Sym "env" ->
-                        { state | output = Debug.toString state.environment }
+                        { state | output = Frame.print (Environment.root state.environment) }
 
                     Sym "debug" ->
                         handleDebug state
-
-                    Sym "help" ->
-                        { state | output = Help.text }
 
                     Define (Str name) value ->
                         handleDefine1 state name value
@@ -222,4 +220,5 @@ handleMissingCase state expr =
             { state | output = "error (17, missing pattern?): could not evaluate expr:: " ++ Debug.toString expr }
 
         Ok value ->
-            { state | output = Print.print value }
+            { state | output = Expr.print value }
+
