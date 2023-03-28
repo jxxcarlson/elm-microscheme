@@ -88,35 +88,35 @@ evalResult env resultExpr =
                         ( Ok aa, Ok bb ) ->
                             case bb of
                                 L bb_ ->
-                                    Ok (L (aa :: bb_))
+                                    Ok (L (aa :: bb_)) |> Debug.log "CONS 1"
 
                                 Quote (L bbb_) ->
-                                    Ok (L (aa :: bbb_))
+                                    Ok (L (aa :: bbb_)) |> Debug.log "CONS 2"
 
                                 Quote bbb_ ->
-                                    Ok (Pair aa bbb_)
+                                    Ok (Pair aa bbb_) |> Debug.log "CONS 3"
 
                                 _ ->
-                                    Ok (Pair aa bb)
+                                    Ok (Pair aa bb) |> Debug.log "CONS 3"
 
                         _ ->
-                            Err (EvalError 23 "Could not evaluate components of cons")
+                            Err (EvalError 23 "Could not evaluate components of cons") |> Debug.log "CONS 4"
 
                 L [ Sym "cons", a, b ] ->
                     case ( eval env a, eval env b ) of
                         ( Ok aa, Ok bb ) ->
                             case bb of
                                 Quote (L bbb) ->
-                                    Ok (L (aa :: bbb))
+                                    Ok (L (aa :: bbb)) |> Debug.log "CONS 5"
 
                                 Quote bbb ->
-                                    Ok (Pair aa bbb)
+                                    Ok (Pair aa bbb) |> Debug.log "CONS 6"
 
                                 _ ->
-                                    Ok (Pair aa bb)
+                                    Ok (Pair aa bb) |> Debug.log "CONS 7"
 
                         _ ->
-                            Err (EvalError 24 "Could not evaluate components of pair")
+                            Err (EvalError 24 "Could not evaluate components of pair") |> Debug.log "CONS 8"
 
                 L ((Sym "car") :: arg :: []) ->
 
