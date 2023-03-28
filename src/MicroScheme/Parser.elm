@@ -38,10 +38,13 @@ exprParser =
         , lambdaParser
         , defineParser
         , ifParser
+        , P.backtrackable negativeFloatParser
         , P.lazy (\_ -> listParser)
         , P.backtrackable intParser
+        , P.backtrackable negativeIntParser
         , stringParser
         , P.lazy (\_ -> defineParser)
+
         , floatParser
         ]
 
@@ -122,6 +125,17 @@ floatParser : P.Parser Expr
 floatParser =
     P.map F P.float
 
+negativeFloatParser : P.Parser Expr
+negativeFloatParser =
+   P.succeed F
+     |. P.symbol "-"
+     |= (P.float |> P.map (\x -> -x))
+
+negativeIntParser : P.Parser Expr
+negativeIntParser =
+   P.succeed Z
+     |. P.symbol "-"
+     |= (P.int |> P.map (\z -> -z))
 
 stringParser : P.Parser Expr
 stringParser =
