@@ -94,8 +94,16 @@ ltPredicate exprs =
         (Z a) :: (Z b) :: [] ->
             Ok (B (a < b))
 
+        (Z a) :: (F b) :: [] ->
+             Ok (B (toFloat a < b))
+
+        (F a) :: (Z b) :: [] ->
+                     Ok (B (a < toFloat b))
+
         (F a) :: (F b) :: [] ->
             Ok (B (a < b))
+
+
 
         _ ->
             Ok (B False)
