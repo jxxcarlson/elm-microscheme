@@ -67,7 +67,7 @@ doStep state =
                 Parser.parse state.input
                     |> Result.map (Frame.resolve [] (Environment.root state.environment))
                     |> (if state.debug then
-                            identity --Debug.log "  PARSE:: "
+                            Debug.log "  PARSE:: "
 
                         else
                             identity
@@ -126,7 +126,7 @@ isCommand state =
         Just command ->
             (List.member command commandNames, String.length command))
 
-commandNames = ["help", "info", "env", "run", "lookup", "lookup-program"]
+commandNames = ["help", "info", "env", "run", "load"]
 
 
 handleCommand state commandSize =
@@ -157,7 +157,13 @@ handleCommand state commandSize =
                      { state | output = Help.text}
 
      else if String.left cmdSize state.input == "info " then
-        { state | output = Help.lookup (String.dropLeft cmdSize state.input)}
+        let arg = String.dropLeft cmdSize state.input in
+          if arg == "topics" then
+            { state | output = Help.topics}
+          else
+            { state | output = Help.lookup arg}
+
+
 
      else if String.left cmdSize state.input == "run " then
          let
@@ -166,12 +172,13 @@ handleCommand state commandSize =
          in
          runProgram_ inputList state
 
-     else if String.left cmdSize state.input == "lookup-program " then
+     else if String.left cmdSize state.input == "load " then
          case Library.lookup (String.dropLeft cmdSize state.input) of
              Nothing ->
                  { state | output = "Sorry, no such program" }
 
              Just program ->
+                 let _ = Debug.log "PROG" program in
                  runProgram_ (String.split ";;" program) state
      else state
 
